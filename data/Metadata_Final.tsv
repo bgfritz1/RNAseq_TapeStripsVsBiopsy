@@ -1,0 +1,25 @@
+Sample	Participant	Subject_type	Sample_Type	AD	Fillagrin_mutation	Eczema_dorsalhand	TLSS_dorsalhand	Sex	Age_years	Height_cm	Weight_kg	BMI	EASI_total	TLSS_total
+TS1	P1	AD	tape_strip	Yes	Heterozygous	Yes	12	F	32	167	103	36.9	22.6	12
+TS10	P10	Control	tape_strip	No	No	No		F	27	181	84	25.6		
+TS11	P11	Control	tape_strip	No	No	No		F	25	177	73	23.3		
+TS12	P12	Control	tape_strip	No	No	No		M	34	178	63	19.9		
+TS14	P1	AD	biopsy	Yes	Heterozygous	Yes	12	F	32	167	103	36.9	22.6	12
+TS15	P2	Control	biopsy	No	Heterozygous	No		M	26	185	88	25.7		
+TS16	P3	Control	biopsy	No	No	No		F	43	171	40	13.7		
+TS17	P4	AD	biopsy	Yes	Homozygous	Yes	4	F	65	172	77	26	5.9	4
+TS18	P5	AD	biopsy	Yes	Heterozygous	No		F	47	157	68	27.6	8.2	
+TS19	P6	AD	biopsy	Yes	Heterozygous	Yes	8	F	24	175	77	25.1	6.7	8
+TS2	P2	Control	tape_strip	No	Heterozygous	No		M	26	185	88	25.7		
+TS20	P7	AD	biopsy	Yes	Heterozygous	Yes	4	F	55	162	61	23.2		4
+TS21	P8	AD	biopsy	Yes	Heterozygous	Yes	10	M	29	186	68	19.7	4.1	10
+TS22	P9	AD	biopsy	Yes	Homozygous	No		F	72	167	82	29.4	6	
+TS23	P10	Control	biopsy	No	No	No		F	27	181	84	25.6		
+TS24	P11	Control	biopsy	No	No	No		F	25	177	73	23.3		
+TS25	P12	Control	biopsy	No	No	No		M	34	178	63	19.9		
+TS3	P3	Control	tape_strip	No	No	No		F	43	171	40	13.7		
+TS4	P4	AD	tape_strip	Yes	Homozygous	Yes	4	F	65	172	77	26	5.9	4
+TS5	P5	AD	tape_strip	Yes	Heterozygous	No		F	47	157	68	27.6	8.2	
+TS6	P6	AD	tape_strip	Yes	Heterozygous	Yes	8	F	24	175	77	25.1	6.7	8
+TS7	P7	AD	tape_strip	Yes	Heterozygous	Yes	4	F	55	162	61	23.2		4
+TS8	P8	AD	tape_strip	Yes	Heterozygous	Yes	10	M	29	186	68	19.7	4.1	10
+TS9	P9	AD	tape_strip	Yes	Homozygous	No		F	72	167	82	29.4	6	

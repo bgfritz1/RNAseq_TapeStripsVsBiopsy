@@ -1,0 +1,549 @@
+---
+title: "RNA-sequencing of paired tape-strips and skin biopsies in atopic dermatitis reveals key differences"
+author: 
+  "Blaine Fritz, PhD$^1$;
+   Anne-Sofie Halling, MD, PhD$^2$; 
+   Isabel Díaz-Pinés Cort,MSc$^1$;
+   Maria Oberländer Christensen, MD$^2$;
+   Amalie Thorsti Moller Rønnstad, MD$^2$;
+   Caroline Meyer Olesen, MD, PhD$^2$; 
+   Mette Hjorslev Knudgaard, MD$^3$; 
+   Claus Zachariae, MD, DMSc$^{3,4}$; 
+   Steffen Heegaard, MD$^4$; 
+   Jacob P. Thyssen, PhD, MD, DMSc$^{2,4}$; 
+   Thomas Bjarnsholt, PhD, DMSc$^{1,5}$"
+bibliography: References.bib
+csl: citation_style.csl
+output:
+  bookdown::word_document2:
+    number_sections: false
+
+
+--- 
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(tidyverse)
+library(bookdown)
+library(scales)
+```
+
+^1^ Department of Immunology and Microbiology, University of Copenhagen, Copenhagen N, Denmark
+
+^2^ Department of Dermatology, Bispebjerg Hospital, Copenhagen NV, Denmark
+
+^3^ Department of Allergy, Skin, and Venereology, Gentofte Hospital, Gentofte, Denmark
+
+^4^ Department of Clinical Medicine, University of Copenhagen, Copenhagen N, Denmark
+
+^5^ Department of Clinical Microbiology, Rigshospitalet, Copenhagen N, Denmark 
+
+<br>
+
+<br>
+
+<br>
+
+<br>
+
+<br>
+
+<br>
+
+
+
+**Corresponding Author**: Thomas Bjarnsholt; Department of Immunology and Microbiology, University of Copenhagen, Copenhagen, Denmark & Department of Clinical Microbiology, Rigshospitalet, Copenhagen, Denmark   
+**Corresponding Author Email**: tbjarnsholt@sund.ku.dk
+
+**Keywords**: atopic dermatitis, tape-strips, biopsies, rna sequencing, inflammation 
+
+**Word Count - Body:** 3437/3500  
+**Word Count - Abstract:** 239/400  
+**Table Count**: 2  
+**Figure Count**: 5  
+
+<br>
+
+---Ignore Below. It will be removed before submission-------------------  
+
+Document Version: 1.5  
+Date Last Compiled: `r format(Sys.time(), '%d %B, %Y')`
+\newpage
+
+# Abstract 
+
+## Background 
+
+Tape-strips and skin biopsies are common methods for investigating the skin in atopic dermatitis (AD).
+Biopsies are more commonly used, but can cause scarring and pain, whereas tape-strips are non-invasive. The objective of this study 
+was to evaluate the performance tape-strips and biopsies for studying AD.
+
+## Methods 
+
+Whole-transcriptome RNA-sequencing was performed on paired tape-strips and biopsies collected from lesional and non-lesional skin from AD patients (n=7) and healthy controls (n=5).
+RNA yield, mapping efficiency, and differentially expressed genes (DEGs) due to method (tape-strip/biopsy) and AD (AD/healthy controls) were compared.
+
+## Results
+
+Tape-strips demonstrated a lower RNA yield (22ng vs. 4,596ng) and mapping efficiency to known genes (28% vs. 93%) than biopsies. 
+Gene-expression profiles of paired tape-strips and biopsies demonstrated a medium correlation (R^2^=0.431).
+Tape-strips and biopsies demonstrated systematic differences in measured expression levels of (6,009) genes across both AD and healthy control samples. 
+Tape strips preferrentially detected many itch (CCL3/CCL4/OSM) and immune-response (CXCL8/IL4/IL5/IL22) genes as well as markers of epidermal dendritic cells (CD1a/CD207), while 
+certain cytokines (IL18/IL37), skin-barrier genes (KRT2/FLG2), and dermal fibroblasts markers (COL1A/COL3A) were preferrentially detected by biopsies. Tape-strips identified more DEGs between 
+AD and healthy controls (3,157 DEGs) then biopsies (44 DEGs). Tape-strips also detected higher levels of bacterial mRNA than biopsies.  
+
+## Conclusions
+This study concludes that tape-strips and biopsies each demonstrate respective advantages for measuring gene-expression changes in AD. 
+Thus, the specific skin layers and genes of interest should be considered before selecting either method.   
+
+
+
+
+
+\newpage
+
+# Introduction
+
+Atopic dermatitis (AD) is a common, inflammatory skin disease characterized by recurring, itchy, erythematous skin lesions. 
+AD often develops during infancy, but is also common in 2-5% of adults.[@RN141;@RN78]
+The specific mechanism of AD is unknown, but likely involves a combination of 
+skin-barrier dysfunction,[@RN142] immune cell and cytokine imbalances,[@RN143] 
+as well as dysbiosis of the skin microbiome.[@RN144] Molecular studies 
+utilizing RNA-sequencing (RNA-seq) have yielded useful insights into the pathomechanism of AD
+[@RN146;@RN145;@RN147;@RN173;@RN175;@RN158;@RN150;@RN151;@RN177;@RN180] and contributed to 
+the development of novel therapeutics, such as Janus kinase and IL4Ra inhibitors.[@RN148;@RN149]
+Studies utilizing RNA-seq to study AD in patient tissues typically rely on single skin biopsies from adult patients, likely due 
+to the invasiveness of the procedure. 
+For similar reasons, few studies include RNA-seq on biopsies collected from children.[@RN150;@RN151] 
+
+Tape-strips offer a simple, non-invasive method skin sampling in infants, adults, and children.[@RN119;@RN120;@RN121;@RN123;@RN124;@RN126;@RN127;@RN128;@RN129;@RN130;@RN131;@RN132;@RN134;@RN157;@RN158;@RN159;@RN160;@RN161;@RN162;@RN163;@RN164;@RN165;@RN166;@RN167;@RN168;@RN169;@RN170;@RN171;@RN131;@RN84;@RN86] 
+The tape-strip method involves the application of an adhesive strip to the skin surface, 
+which is then removed to capture cells from the superficial layers of the skin and associated proteins, lipids, microbes, and other molecules. 
+Multiple tape-strips can be used to capture deeper skin layers, but tape-strips generally do not reach deeper than the stratum corneum.[@RN183, @RN181]
+Studies have performed targeted measurements of mRNA expression[@RN93;@RN119;@RN120;@RN121;@RN127;@RN129;@RN130;@RN134] and 
+protein levels [@RN168;@RN161;@RN160;@RN171;@RN176;@RN170;@RN130] measured from tape-strips. More recently, RNA-seq studies demonstrated that tape-strips can detect
+transcriptomic changes associated with AD.[@RN84;@RN86;@RN124;@RN132;@RN152] Few studies perform direct comparisons 
+between tape-strips and skin biopsies to quantitatively evaluate the biases or advantages of tape-stripping for RNA-seq studies.[@RN84;@RN86;@RN152] 
+
+Here, we performed whole-transcriptome RNA-seq on paired tape-strips and skin biopsies from patients with and without AD to assess 
+the abilities of each method for detecting differentially expressed genes associated with AD. 
+We tested whether RNA-seq data from tape-strips resembles data from biopsies, as well as examined potential systematic biases associated with each method. 
+Finally, we assessed whether differential gene expression between AD and non-AD samples identified similar genes when performed with each method independently. 
+We demonstrate that, despite lower data quality, tape-strips demonstrate utility in differential gene expression analysis of AD.
+
+# Methods
+
+## Study Approval 
+
+The study was conducted in accordance with the Declaration of Helsinki and approved by
+the Scientific Ethical Committee of the Danish Capital region (H-18008874) and the local 
+data protection agency (ID-no.: VD-2018-325, I-suite no.: 6573).
+
+## Study Participants and Inclusion
+
+This study included 12 adult participants (7 with dermatologist-diagnosed AD and 5 control subjects with no history of AD). 
+All AD patients were part of a larger study involving filaggrin (FLG) gene mutations. 
+All AD patients and one healthy control had a FLG mutation. 
+Study participants were enrolled and examined between March and May 2019. 
+AD patients were recruited from the Department of Dermatology and Allergy, Gentofte Hospital,
+Denmark. AD patients were eligible if they were between 18 and 69 years old, diagnosed with AD according to 
+the Hanifin and Rajka criteria,[@RN153] had AD for at least 3 years, carried a FLG mutation (R501X, 2282del4, or R2447X), 
+had no history of other inflammatory diseases, and had not received systemic 
+immunotherapy within 4 weeks prior to examination. Healthy controls were 
+recruited from an online webpage for study participants,[@RN184] and were eligible if they were between 18 and 69 years old, had no history 
+of very dry skin, no history of AD/eczema/atopic diseases, no family history of atopy, no inflammatory diseases, 
+and no treatment with systemic immunotherapy within 4 weeks prior to examination. 
+
+## Study Visit and Sample Collection
+
+All participants attended in one hospital visit, which included a study 
+interview, skin examination by a physician, and sample collection. Overall AD severity was assessed 
+using the Eczema Area and Severity Index (EASI).[@RN156] Site-specific AD severity 
+was assessed using the target lesion severity score (TLSS).[@RN155]
+
+Eight tape-strips (diameter = 22 mm; Cuderm, USA) and one skin biopsy (diameter = 3 mm) 
+were collected from the dorsal aspect of the hand, directly adjacent to the tape-stripped location. Each tape-strip was 
+applied on the skin and standardized pressure (225 gr/cm^2^) was applied for 10 seconds using a D-Squame pressure 
+application pen before removal of the tape and application of a new tape on the exact same location. 
+The tapes were placed in a sterile, nuclease-free tube and stored at -80 °C. 
+The sixth tape-strip was sent for protein measurement and not included in RNA-seq analysis. 
+For the skin biopsy, the sample area was cleaned with an antiseptic solution and local 
+anesthesia (lidocaine - 10 mg and epinephrine - 5 µg) was injected. The skin biopsy 
+was placed in a nuclease-free tube and stored at -20 °C. A blood sample was collected to test for FLG gene mutation. 
+
+
+## RNA extraction, library preparation, and sequencing 
+
+RNA was purified from tape-strips and biopsies by phenol/chloroform extraction with Trizol^®^ reagent followed by 
+isopropanol precipitation of the total RNA. Detailed methods can be found in Supplementary Methods. Briefly, for biopsies, RNA was extracted by 
+placing the biopsy in a bead beading tube and homogenizing the sample with a Magnalyzer instrument (Roche, Germany). For tapes, each tape was vortexed in a  
+tube containing Trizol^®^. The Trizol^®^ was then removed and placed into a new tube containing the next consecutive tape for a total of seven tapes. Chloforom was then added and the samples were shaken by hand 
+and centrifuged to create a phase separation. The aqueous phase was collected and total RNA was precipitated using isopropanol, cleaned with ethanol, and eluted in nuclease-free water. Concentration and purity were assessed 
+with a Nanodrop spectrophotometer (Thermofisher Scientific, USA). Ribosomal RNA depletion was then performed with the riboPOOLs rRNA depletion kit 
+(siTOOLS Biotech, Germany) using a 100:1 combination of the Human_riboPOOL-RP3 to Pan-Pro_riboPOOL-RP3. Depleted RNA was collected and treated with 
+RQ1 RNAse-free DNAse (Promega, USA) and purified with a Clean & Concentrate-5 RNA kit (Zymo Research, USA). Library preparation was performed with the 
+NEB Ultra II RNA directional library prep kit. Quality and molarity of the final libraries were assessed with an  Agilent 2100 Bioanalyzer using a High-Sensitivity DNA chip (Agilent Technologies, USA) and
+a Qubit fluorometer (Invitrogen, USA). Samples were pooled in equimolar concentrations and sequenced on an Illumina NovaSeq6000 instrument (S4 flow-cell, 150PE). 
+
+## Processing of raw sequencing data 
+
+Raw sequencing data was demultiplexed with bcl2fastq v2.0 (Illumina, USA). 
+Processing of raw sequencing data was performed with an in-house pipeline.[@RN135] 
+Briefly, samples sequenced across multiple sequencing lanes of the same flow cell were concatenated. 
+Reads were then trimmed with *cutadapt v3.4* to remove sequencing adapters.[@RN136] 
+Reads less than 30 nucleotides in length were filtered. The trimmed and filtered reads were then aligned to the 
+human reference genome (GRCh38 primary assembly, Ensembl release 107) using *bwa-mem v0.7.17* with default settings.[@RN137] 
+Read pairs mapping to known gene features were counted with *featureCounts* from the *subRead v2.0.3* package with  
+*--fracOverlap 0.2*.[@RN30] *Kraken2 v2.1.2* was also applied to the concatenated sequencing files to quantify bacterial reads 
+using the full, standard RefSeq index.[@RN1] Reads classified as *Homo sapiens* were counted as host reads, 
+while reads mapping to the kingdom Bacteria at any taxonomic level were counted as bacterial reads.
+
+
+## Bioinformatic analysis and statistics 
+
+Genes not present with at least 10 counts in 5 samples (the size of the smallest group - active AD) were excluded.
+The difference in number of genes with detectable expression between methods was determined by calculating the difference in number of genes 
+detected above a given expression threshold for each tape-strip and biopsy in a pair and tested with a paired t-test. This was repeated for incremental increases in the threshold 
+cutoff from 10 to 75. The count matrix was then normalized with the *vst* function from the DESeq2 package and used for the remaining analysis, unless otherwise specified.[@RN138] 
+Between-sample similarities were calculated with euclidean distance. Variance partitioning was performed with the *variancePartition* package in R. 
+Differential gene-expression analysis was performed with DESeq2 on the filtered, un-normalized count matrix. Differentially expressed genes were identified as those with an 
+absolute log2FoldChange > 1 and an adjusted p-value less than 0.05. P-values were adjusted for multiple testing when appropriate.  
+
+# Results
+
+```{r summary_stats, echo = FALSE}
+
+df_stats <- read_delim("../results/generated_data/06_seq_stat_summary.csv", show_col_types = FALSE)
+df_featureCounts <- read_delim("../results/generated_data/06_featureCounts_summary.csv", show_col_types = FALSE)
+
+summary_table <- 
+  df_stats %>%
+    left_join(df_featureCounts, by = c("Sample", "Sample_Type", "Participant")) %>%
+    group_by(Sample_Type) %>%
+    summarize("n" = n(), 
+              "Total Sequences (M)" = mean(`FastQC_mqc-generalstats-fastqc-total_sequences`)/1000000,
+              "Total Sequences SD" = sd(`FastQC_mqc-generalstats-fastqc-total_sequences`)/1000000,
+              "Mapped - Known Genes (M)" = mean(Assigned)/1000000,
+              "Mapped - Unknown/Unannotated Regions (M)" = mean(Unassigned_NoFeatures)/1000000,
+              "Percent Assigned (%)" = mean(percent_assigned)
+              ) %>%
+   mutate(across(!c("n", "Sample_Type"), ~round(.,2)))
+
+mean_total_tapes <- summary_table %>% filter(Sample_Type == "tape_strip") %>% pull("Total Sequences (M)")
+mean_total_biopsy <- summary_table %>% filter(Sample_Type == "biopsy") %>% pull("Total Sequences (M)")
+sd_total_tapes <- summary_table %>% filter(Sample_Type == "tape_strip") %>% pull("Total Sequences SD")
+sd_total_biopsy <- summary_table %>% filter(Sample_Type == "biopsy") %>% pull("Total Sequences SD")
+
+mean_assigned_tapes <- summary_table %>% filter(Sample_Type == "tape_strip") %>% pull("Mapped - Known Genes (M)")
+mean_assigned_biopsy <- summary_table %>% filter(Sample_Type == "biopsy") %>% pull("Mapped - Known Genes (M)")
+
+summary_table <- summary_table %>% rename("Sample Type" = Sample_Type)
+
+```
+
+This study included 7 AD patients (median age: 47; 86% female) and 
+5 healthy controls (median age: 27; 60% female) (Table \@ref(tab:metadata-table)). Five of the seven AD patients had 
+active AD at the sampling location with a median TLSS score of 8 (IQR: 4-10). Five AD patients
+and one healthy control were heterozygous carriers of a FLG gene mutation. Two AD patients were homozygous 
+for a FLG mutation. RNA seq libraries were successfully generated from all tape-strip and biopsy pairs. 
+
+## Tape-strips had lower RNA yields and fewer sequences mapping to known genes
+
+Tape strips demonstrated a lower yield of RNA and lower mapping efficiency than biopsies for all samples. 
+RNA extraction isolated a mean of 4,596.0 ± 1,980.0 ng and 22.0 ± 31 ng total 
+RNA from skin biopsies and tape-strips, respectively. RNA-seq generated a mean of 
+`r mean_total_biopsy` M ± `r sd_total_biopsy` and `r mean_total_tapes` 
+M ± `r sd_total_tapes` paired-end reads for the biopsies and tape-strips, respectively. 
+Tape-strips demonstrated a lower number of reads (~28%) assigned to gene-level features than biopsies (~93%), 
+despite achieving similar sequencing depths (Figure \@ref(fig:figure1)A). Tape strips also showed
+an increased number of reads mapping to unannotated gene features. Descriptive 
+statistics for the sequencing data are displayed in Table \@ref(tab:stats-table).    
+
+## Tape-strips and skin biopsies detect similar genes 
+
+```{r gene-coverage}
+
+df_diffcoverage <- read_delim("../results/generated_data/01_df_gene_count_diff.csv", show_col_types = F)
+
+mean_diff <- lapply(c(1,10,75), function(x){
+  round(mean(df_diffcoverage$diff[df_diffcoverage$cutoff==x]))
+})
+
+
+
+sd_diff <- lapply(c(1,10,75), function(x){
+  round(sd(df_diffcoverage$diff[df_diffcoverage$cutoff==x]))
+})
+
+mean_diff <- prettyNum(unlist(mean_diff), big.mark = ",")
+sd_diff <- prettyNum(unlist(sd_diff), big.mark = ",")
+```
+
+```{r common-genes, echo = F}
+
+df_common_genes <- read_delim("../results/generated_data/01_n_common_genes_cutoff10.csv", show_col_types = F)
+
+mean_common_genes <- mean(df_common_genes$value[df_common_genes$variable=="n_common"])
+sd_common_genes <- sd(df_common_genes$value[df_common_genes$variable=="n_common"])
+
+common_out <- lapply(c(mean_common_genes, sd_common_genes), function(x){
+  prettyNum(round(x), big.mark = ",")
+})
+
+```
+
+To compare the ability of the tape-strips and biopsies to describe the transcriptome, 
+we first compared the total number of genes with detectable expression between each matched tape-strip and skin biopsy pair. 
+There was no significant difference (p = 0.421, paired t-test) in the number of genes observed between the methods in each pair. We repeated this analysis to only include genes 
+with a moderate-to-high expression (>75 observed sequences). In this case, skin biopsies detected 
+significantly more genes than their paired tape-strips (p < 0.05, paired t-test)(Figure \@ref(fig:figure1) B,D). 
+The mean difference (±SD) in the number of genes between methods was 
+`r paste0(mean_diff[2], " ± ", sd_diff[2], " genes")`, and 
+`r paste0(mean_diff[3], " ± ", sd_diff[3], " genes")` for 
+cutoffs of 10 and 75 observed sequences, respectively, where a positive value represents more genes found with skin biopsies. Nonetheless, an average of 
+`r paste0(common_out[[1]], " ± ",common_out[[2]])` genes with detectable expression were shared between methods
+in each pair (Figure \@ref(fig:figure1) E).    
+
+
+## Tape-strips show higher inter-sample variability and medium correlation to skin biopsies
+ 
+To examine whether tape-strips and skin biopsies describe similar gene expression profiles, we compared gene expression profiles for each pair of 
+tape-strip and skin biopsy samples, across all AD and healthy samples. We observed an overall medium correlation 
+between the gene-expression profiles measured by the tape-strips and skin biopsies 
+(median R^2^ = 0.431 ± 0.20, pearson correlation). Interestingly, three tape-strip/biopsy pairs showed markedly higher correlations to their paired biopsy 
+(R^2^ > 0.75; Figure S1). Hierarchical clustering identified that gene-expression profiles clustered by sample method rather than subject or 
+AD status (Figure \@ref(fig:figure2)A). As with the correlation analysis, 
+three tape-strip samples (T8, T10, T12) clustered with biopsy samples,
+suggesting that these samples showed an expression profile that more closely resembled that obtained from biopsies. 
+Sample type (tape-strip or biopsy) was the main source of variability among samples 
+(Figure \@ref(fig:figure2)D). Principal component analysis (PCA) demonstrated a clear separation between the gene expression profiles from 
+tapes and biopsies (Figure \@ref(fig:figure2)B). Tape strip samples demonstrated a higher between-sample variability when compared to biopsies.
+Despite this, tape-strips were slightly better at explaining gene expression changes associated with AD (Figure \@ref(fig:figure2)D).  
+
+## Tape-strips and biopsies uniquely detect certain, AD-specific genes
+
+```{r dge , echo = F} 
+
+de_TapeVsBiopsy_Ecz <- 
+  read_delim("../results/generated_data/11_res_TapeVsBiopsy_ADandEcz_sig.csv", show_col_types = F) 
+
+de_TapeVsBiopsy_NoEcz <- 
+  read_delim("../results/generated_data/11_res_TapeVsBiopsy_NoADorEcz_sig.csv", show_col_types = F) 
+
+#Note: Positive log2FoldChange == higher expression in tapes
+
+```
+
+To identify potential "global" biases between methods, we performed differential gene expression 
+between tape-strips and skin biopsies. We identified a total of `r nrow(de_TapeVsBiopsy_Ecz)`  
+and `r nrow(de_TapeVsBiopsy_NoEcz)` DEGs across all AD and non-AD samples, whose expression level depended on sampling method.
+The majority of these DEGs (n= 6,009) were identified in both AD and non-AD samples (Figure \@ref(fig:figure3)D). 
+We then examined whether these DEGs were associated with itch, immune response, or skin barrier, based on gene lists from a previous study.[@RN152] The majority of 
+tested genes associated with itch or immune response showed higher expression in tape-strips (Figure \@ref(fig:figure3) A,B). Many of the DE genes were associated with a type-2 inflammatory response, 
+including several interleukins (IL4,IL5,IL10,IL13) and T-cell differentiation factors (CD28,CTLA4,IRF4). Several other chemokines 
+(CCL3,CCL4,CCL17,CCL18,CCL20,CCL28,CXCL8) demonstrated increased expressed in tape-strips. Contrarily, a few itch and immune genes (IL18,IL37,KLK7,CCL27) 
+showed higher expression in biopsies. Skin barrier genes were generally detected by either tape-strips or biopsies
+and depended on the condition (active AD or control subjects)(Figure \@ref(fig:figure3)C). 
+The most highly-expressed genes from tape-strips taken from AD patients with active AD were associated to fatty acid catabolism or metabolism 
+(ACOX2,FASD1,FASD2,FADS1,FADS2,FAR2,PPARG,SOAT1) (Table S4). Cadherins (CD12,CD20) showed higher expression in tapes for both conditions. 
+Interestingly, certain keratins were differentially identified - KRT34 and KRT16 were highly expressed in tape-strips, 
+while KRT2 was highly expressed in biopsies. Filaggrin (FLG2) showed increased expression in biopsies from AD patients with active AD, 
+but was not differentially detected in control subjects. Furthermore, the methods showed preferential detection of immune cell types (Table S10). 
+For example, tapes better captured gene markers from epidermal cell types, such as epidermal dendritic cells (CD1a,CD207), 
+while biopsies captured signals from dermal fibroblasts (COL1A,COL3A).
+
+
+## Tape-strips identify more differentially expressed genes between AD and control skin than biopsies
+
+```{r tape-biops-DEstats, echo = F}
+
+de_Ecztapes <- read_delim("../results/generated_data/11_res_Tape_ControlVsADEcz_sig.csv", show_col_types = FALSE)
+de_Eczbiops <- read_delim("../results/generated_data/11_res_Biops_ControlVsADEcz_sig.csv", show_col_types = FALSE)
+
+
+de_ADtapes <- read_delim("../results/generated_data/11_res_Tape_ControlVsADNoEcz_sig.csv", show_col_types = FALSE)
+de_ADbiops <- read_delim("../results/generated_data/11_res_Biops_ControlVsADNoEcz_sig.csv", show_col_types = FALSE)
+
+
+Ecz_n_biops_up <- de_Eczbiops %>% filter(padj<0.05 & log2FoldChange>1) %>% tally() %>% pull(n)
+Ecz_n_biops_down <- de_Eczbiops %>% filter(padj<0.05 & log2FoldChange<(-1)) %>% tally() %>% pull(n)
+Ecz_n_tape_up <- de_Ecztapes %>% filter(padj<0.05 & log2FoldChange>1) %>% tally() %>% pull(n)
+Ecz_n_tape_down <- de_Ecztapes %>% filter(padj<0.05 & log2FoldChange<(-1)) %>% tally() %>% pull(n)
+
+AD_n_biops_up <- de_ADbiops %>% filter(padj<0.05 & log2FoldChange>1) %>% tally() %>% pull(n)
+AD_n_biops_down <- de_ADbiops %>% filter(padj<0.05 & log2FoldChange<(-1)) %>% tally() %>% pull(n)
+AD_n_tape_up <- de_ADtapes %>% filter(padj<0.05 & log2FoldChange>1) %>% tally() %>% pull(n)
+AD_n_tape_down <- de_ADtapes %>% filter(padj<0.05 & log2FoldChange<(-1)) %>% tally() %>% pull(n)
+
+```
+To compare the utility of tape-strips with biopsies for studying AD skin, we used each method to performed differential
+gene-expression analysis between active AD skin and healthy controls.
+Tape strips identified `r Ecz_n_tape_up + Ecz_n_tape_down` DE genes, where `r Ecz_n_tape_up` showed increased 
+expression in active AD and `r Ecz_n_tape_down` showed increased expression in healthy controls. Comparatively, 
+skin biopsies identified `r Ecz_n_biops_up + Ecz_n_biops_down` DE genes, where `r Ecz_n_biops_up` 
+showed increased expression in active AD (Figure \@ref(fig:figure4)A) and `r Ecz_n_biops_up` showed increased expression in healthy controls. 
+Tape-strips identified increased expression of IL5, HDC, TAC1, and AOC1 in active AD, which have roles in immune response and itch. 
+However, the majority of the most significant DE genes upregulated in active AD skin were not of clear relevance and were expressed at low levels (Figure \@ref(fig:figure4)C). 
+The most significant DE genes identified by tape-strips in active AD included keratins (KRT33AB/34/85/31) and S100As (S100A3), 
+which showed significantly increased expression in healthy controls (Figure \@ref(fig:figure4)C). Contrarily, biopsies identified several S100As (S100A7, S100A8, S100A9) and defensins (DEFB4A, DEFB4B), 
+with increased expression in active AD. 
+
+This analysis was repeated for to compare non-lesional AD skin with healthy controls from
+non-AD controls. Interestingly, tape-strips identified more genes in this comparison than between active AD and healthy controls (Figure \@ref(fig:figure4) B). 
+Between inactive AD and control skin, tape-strips identified `r AD_n_tape_up + AD_n_tape_down` DE genes, 
+where `r AD_n_tape_up` showed increased expression in active AD and `r AD_n_tape_down` 
+showed increased expression in healthy controls. Comparatively, biopsies identified only `r AD_n_biops_up + AD_n_biops_down` 
+DE genes. Biopsies identified several keratin-associated genes with increased 
+enrichment in control skin (Figure \@ref(fig:figure4)D). The most significantly differentially expressed gene identified by tape-strips was KRT31. 
+Other cytokines (IL5, IL33, CCL3, CXCL8), S100As (S100A6), and keratins (KRT2,KRT6A,KRT34,KRT16) were also differentially expressed 
+between inactive AD and healthy controls. In both cases (active AD vs control and inactive AD vs control), 2,420 genes were 
+detected as differentially expressed with tape-strips in both comparisons.
+
+## Analysis of Bacterial Reads in Biopsy and Tape-Strips
+
+``` {r kraken-data, echo = F}
+
+df_kraken <- read_delim("../results/generated_data/05_kraken_results.csv", show_col_types = F)
+
+df_krakendiff <- 
+  df_kraken %>%
+    select(Sample_Type, Participant, Bac_prcnt) %>%
+    group_by(Participant) %>%
+    summarize("diff" = diff(Bac_prcnt))
+
+mean_diff <- round(mean(df_krakendiff$diff), 2)
+sd_diff <-  round(sd(df_krakendiff$diff), 1)
+
+kraken_pairedttest <- 
+t.test(df_krakendiff$diff, mu = 0)
+
+```
+
+Further, we compared the ability to detect of bacterial mRNA between tape-strips and the biopsies (Figure \@ref(fig:figure4)). 
+Tape-strips identified an average of `r paste0(mean_diff, " ± ", sd_diff )` % more bacterial reads than biopsies 
+(p = `r format(round(kraken_pairedttest$p.value,5), scientific=F)`, paired t-test).  
+Both methods identified clinically relevant AD bacterial species, but biopsies showed a high level of *Bacillus cerus* contamination. We did not identify any bacterial, 
+species-level taxa that were differentially abundant between AD and non-AD samples with either tapes or biopsies. 
+
+
+## Discussion
+
+Here, we present an in-depth comparison of skin tape-strips and skin biopsies for examining transcriptomic changes associated with AD. We identify 
+systematic effects of sampling method (tape-strips or skin biopsies) on gene-expression levels measured by RNA-seq. We also demonstrate that 
+tape-strips detected more differentially expressed AD genes than skin biopsies. This study overcomes limitations of previous studies by implementing a 
+non-targeted RNA-seq approach, including a detailed and transparent assessment of data quality, assessing 
+systematic biases between methods, and including paired analyses of active AD, inactive AD, and healthy controls. 
+
+We identified over 6,000 DE genes due to method across both AD and healthy controls - a similar magnitude as observed 
+by Sølberg et al.[@RN86] These effects, as suggested by previous studies, are likely due to the different skin layers collected by each method. 
+Tape-strips only collect cells from the upper epidermal skin layers,[@RN181;@RN167] while skin biopsies collect both epidermal and dermal layers. 
+For example, both this study and Del Duca et al. detect signals from dermal fibroblasts with biopsies (COL1A, COL3A), while markers of 
+epidermal dendritic cells (CD1a, CD207) are increased in tape-strips. [@RN152; @RN186; @RN188] We identify specific enrichment of pathways associated with itch 
+and immune response in tape-strips, in agreement with Del Duca et al.[@RN152] Increased signals in these pathways may be due to specific sampling of the upper epidermal 
+layers, where the signal is not diluted by cells from the dermis. 
+
+An important application of tape-strip sampling is non-invasive sampling different skin conditions, such as to compare AD with non-AD. Our study identifies that tape-strips 
+identify many more AD-associated genes than biopsies. This phenomenon was also found by Del Duca et al., who observed a similar difference in the number of DEGs between the methods.[@RN152] 
+Solberg et al.[@RN124] also identified a similar number of DE genes between lesional-AD and non-AD, control skin samples as well as between non-lesional 
+AD and non-lesional control skin using tape-strips, while Dyjack et al.[@RN84] identified fewer DEGs between non-lesional AD and non-AD controls.
+The observation that tape-strips identify many more DEGs than skin biopsies between AD and non-AD by 
+our study as well as and Del Duca et al.[@RN152] is novel, but should be considered carefully. In our data, tape-strips demonstrated a large between-sample variability. 
+This is highlighted in Figure \@ref(fig:figure2)B, where a subset of tape-strip samples from healthy controls clustered closer to skin biopsies. 
+It is unclear whether this effect is biological or technical. Further, the mean expression of genes identified as significantly differentially expressed between lesional-AD and healthy controls
+ is low (Figure \@ref(fig:figure4)C), suggesting that magnitude of the changes in gene expression is low. Further characterization and additional data are required to clarify these results. 
+
+Assessment of the quality of underlying data is an essential step when performing and interpreting data from RNA-seq, but not consistently reported. RNA-yields from tape-strips in this study were significantly 
+lower than that from skin biopsies, consistent with previous reports [@RN186]. We also identify that RNA-seq data generated from tape-strips yielded a high proportion (~50%) 
+of sequences aligning to genomic regions with no annotated genes. A similar effect was also identified by Sølberg et al., who identified a high proportion of intronic sequences [@RN148] in tape-strip data and 
+attribute this effect to biological factors, such as intron retention. However, we observe a high level of sequences mapping to unannotated regions at the gene level (i.e. not intronic), 
+so we hypothesize that this effect is due to DNA contamination. Nonetheless, this result highlights that tape-strips need to 
+be sequenced more deeply than skin biopsies to obtain similar depths - which may be a financial limitation for some studies. Standardized and effective 
+methodologies for RNA extraction should be developed to alleviate these burdens. Genes identified with low expression 
+levels may be more highly influenced by normalization, thus genes with high fold-changes but low expression values should be interpreted with caution. 
+
+There are several limitations in this study. Non-lesional control samples were not available from subjects with active AD, 
+thus the effect could not be investigated. There was also a high variability in the amount of DNA extracted from the tape-strip samples and quality of 
+sequencing data obtained. The majority of non-AD samples had more RNA extracted and better quality sequencing data. Thus, it is difficult to determine whether genes identified 
+as differentially expressed with tape-strips between, for example, non-AD controls and eczema skin from AD patients are differentially expressed due to physiological changes 
+or methodological biases. Further, we hypothesized that DNA contamination plays a role in background signal for tape-strips, but DNA concentration measurements were not available.  
+
+
+## Conclusions
+
+This study provides evidence supporting tape-stripping as an adequate method for performing 
+RNA-seq analysis of AD and non-AD skin. Tape-strips clearly identified more differentially 
+expressed genes between AD and non-AD skin than paired skin biopsies. However, extraction of RNA was more 
+difficult and the quality of obtained RNA-seq data was lower for tape-strips than skin biopsies. 
+Tape-strips and skin biopsies also demonstrate systematic differences in their gene expression profiles, likely due to 
+the skin layers sampled. Thus, researchers should carefully consider the skin layer of interest as well 
+as feasability of implementing tape-strips for RNA-seq analysis of AD.
+
+## Acknowledgements
+
+Funding for this work was provided by the Novo Nordisk Foundation (Grant number: 0054390).
+
+\newpage
+
+## Figures
+```{r figure1, echo = F, fig.cap="A. Summary of gene-level read-pair assignments for each subject. B. Number of genes detected above a given read-count threshold for tape-strips and skin biopsies. Dotted-lines connect paired samples. C. Mean difference in the number of detected genes (Difference = # of Genes (Biopsy) - # of Genes (Tape-Strip)) with increasing read count thresholds. D. False-discovery rate (FDR) adjusted p-values values for paired t-test between mean number of detected genes at each count cut-off value. E. Number of genes shared (n_common) between methods compared to total genes identified with tape-strips (n_tape) or skin biopsies (n_biopsy) for genes with >10 and >100 counts."}
+
+knitr::include_graphics("../results/generated_figures/Figure1.png")
+
+```
+
+\newpage
+```{r figure2, echo = F, fig.cap="A. Heatmap of between-sample distances for the gene-expression profiles from skin biopsies and tape-strips. B. PCA-plot of vst-normalized gene expression profiles for protein-coding gene-features (n = 24,739). C. Scree plot of variance explained by principal-component (PC) for PC1 to 10. D. Violin plots of partitioned variance for each gene and each variable. This analysis was performed on all data, tape-strips only, and skin biopsies only."}
+knitr::include_graphics("../results/generated_figures/Figure2.png")
+```
+
+
+
+\newpage
+```{r figure3, echo = F, fig.cap="Genes associated with itch (A), immune response (B), or skin-barrier (C), differentially expressed due to sampling method (tape-strips or skin biopsies). The analysis was performed separately for active AD samples (left table) and healthy (right table). Tables show the top 10 most significant up- and down-regulated genes which overlap with the list of given genes for each pathway. If fewer than 10 genes overlap, all overlapping genes are displayed. BaseMean values represent the mean of the vst-normalized expression. Differential expression is displayed as log2(FoldChange), where positive log2(FoldChange) represents increased expression in tape-strips (red) or skin biopsies (blue). (D) Venn diagram showing total number of significantly differentially expressed genes between tape-strips and skin biopsies for lesional AD and healthy controls. Values represent the number of significantly DE genes with increased expression in tape-strips (red) or skin biopsies (blue)."}
+
+knitr::include_graphics("../results/generated_figures/Figure3.png")
+```
+
+
+
+\newpage
+```{r figure4, echo = F, fig.cap="Differential gene expression analysis comparing AD against healthy controls for tape-strips or biopsies. (A,B) Venn diagrams of differentially expressed (DE) genes between active (A) and inactive AD (B) when compared to healthy controls. Values display the number of significant DE genes with increased expression in AD or healthy controls (blue). (C) The top 10 most significant DE genes with increased expression in AD (red) or non-AD controls (blue). Color intensity corresponds to magnitude of the log2(FoldChange). BaseMean values represent the mean of the vst-normalized expression. Differential expression is displayed as log2(FoldChange), where positive log2(FoldChange) represents increased expression in AD (red) or healthy controls (blue)."}
+knitr::include_graphics("../results/generated_figures/Figure4.png")
+```
+
+
+\newpage
+```{r figure5, echo = F, fig.cap="A. Percentage of total reads assigned to Bacteria per sample. B. Boxplot of percentage of total reads assigned to Bacteria by sampling method. C,D. Tables of Top 10 bacterial species by mean relative activity per method. Relative activity is calculated as the number of reads assigned to a specific, species-level taxa divided by the total number of reads assigned at the species level per sample."}
+knitr::include_graphics("../results/generated_figures/Figure5.png")
+```
+
+\newpage
+## Tables 
+
+
+```{r metadata-table, caption = "test", message=FALSE}
+metadata_table <- readRDS("../results/generated_rds/08_summary_table.rds")
+
+metadata_table
+
+```
+
+\newpage
+```{r stats-table, caption = "test"}
+
+knitr::kable(
+  summary_table, booktabs = TRUE,
+  caption = "Summary Statistics of RNA-seq Data. Total Sequences refers to the 
+  total number of sequences (in millions, M) obtained from sequencing. Mapped - Genes refers to 
+  RNA sequences aligning to annotated gene regions of the human genome, including multi-mapping sequences. 
+  Mapped - Unknown/Unannotated describes sequences mapping to the human genome, but 
+  in regions with no annotated gene.  Percent assigned describes the percent of all sequences
+  aligning to annotated gene regions."
+)
+
+```
+
+\newpage
+
+## References
+
