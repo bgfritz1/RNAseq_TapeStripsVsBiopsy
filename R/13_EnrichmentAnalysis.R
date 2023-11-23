@@ -405,7 +405,7 @@ ggsave(paste0(out_dir, "/generated_figures/13_Itch.png"), pw_plots_Itch)
 #From: https://github.com/ba306/immune-cell-signature-discovery-classification-paper/blob/main/gene_lists_papers/all_immune_cell_signatures_curated.txt
 
 signatures <- 
-  read_delim("./scratch/all_immune_cell_signatures.tsv") %>% 
+  read_delim("./data/all_immune_cell_signatures.tsv") %>% 
   dplyr::select(Cell_type, Gene) %>% distinct()
 
 
