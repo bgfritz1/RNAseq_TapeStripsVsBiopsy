@@ -71,7 +71,7 @@ library(scales)
 ## Background 
 
 Skin tape-strips and biopsies are widely used methods for investigating the skin in atopic dermatitis (AD).
-Biopsies are more commonly used but can cause scarring and pain, whereas tape-strips are non-invasive but sample less tissue. The study
+Biopsies are more commonly used but can cause scarring and pain, whereas tape-strips are non-invasive but sample less tissue. This study
 evaluated the performance of skin tape-strips and biopsies for studying AD.
 
 ## Methods 
@@ -480,6 +480,18 @@ of patient samples and data. BF processed the samples and generated RNA-seq data
 all statistical and bioinformatic analyses. BF, AH, IC, AR, CZ, SH, JT, TB contributed to interpretation and analysis of the data. 
 BF drafted the initial manuscript. All coauthors contributed to drafting and reviewing later versions of the manuscript. 
 Funding for this work was provided by the Novo Nordisk Foundation (Grant number: 0054390).
+
+## Conflict of Interest Statment
+
+JT was an advisor for AbbVie, Almirall, Arena Pharmaceuticals, Coloplast, OM Pharma, Aslan Phar-maceuticals, Union Therapeutics, Eli Lilly & Co, 
+LEO Pharma, Pfizer, Regeneron, and Sanofi-Genzyme, a speaker for AbbVie, Almirall, Eli Lilly & Co, LEO Pharma, Pfizer, Regeneron, 
+and Sanofi-Genzyme, and received research grants from Pfizer, Regeneron, and Sanofi-Genzyme. He is currently an employee of LEO Pharma. All other 
+authors have no conflicts of interest to disclose. 
+
+## Data Availability Statement
+
+All data to fully reproduce the findings in this study is openly available in [repository name e.g “figshare”] at http://doi.org/[doi], reference number [reference number]. Additional 
+data is also provided in the Supplementary Materials. 
 
 
 \newpage
