@@ -490,7 +490,7 @@ authors have no conflicts of interest to disclose.
 
 ## Data Availability Statement
 
-All data to fully reproduce the findings in this study is openly available in [repository name e.g “figshare”] at http://doi.org/[doi], reference number [reference number]. Additional 
+All data to fully reproduce the findings in this study is openly available as a Zenodo repository at http://doi.org/10.5281/zenodo.10214011. Additional 
 data is also provided in the Supplementary Materials. 
 
 
