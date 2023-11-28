@@ -217,7 +217,7 @@ cats<-c(
 de_tables <- lapply(cats, function(x){
   
   title_type <- ifelse(grepl("Tape", x), "Tape Strip", "Biopsy")
-  title_condition1 <- ifelse(grepl("ControlVsADEcz", x), "Lesional AD", "Non-Lesional AD")
+  title_condition1 <- ifelse(grepl("ControlVsADEcz", x), "Active AD", "Inactive AD")
   title_condition2 <- "Control"
   
   
@@ -316,8 +316,8 @@ df_topSpecies_tape <-
     dplyr::select(ID, mean_rel_abund, sd_rel_abund) %>%
     mutate(mean_rel_abund = round(mean_rel_abund, 2)) %>%
     mutate(sd_rel_abund = round(sd_rel_abund,1)) %>%
-    rename(mean_rel_abund = "Mean\nRelative\nActivity (%)",
-           sd_rel_abund = "SD\nRelative\nActivity (%)")
+    dplyr::rename("Mean\nRelative\nActivity (%)" = mean_rel_abund,
+           "SD\nRelative\nActivity (%)" = sd_rel_abund)
   
 
 df_topSpecies_biopsy <- 
@@ -326,8 +326,8 @@ df_topSpecies_biopsy <-
     dplyr::select(ID, mean_rel_abund, sd_rel_abund) %>%
     mutate(mean_rel_abund = round(mean_rel_abund, 2)) %>%
     mutate(sd_rel_abund = round(sd_rel_abund,1)) %>%
-    rename(mean_rel_abund = "Mean\nRelative\nActivity (%)",
-           sd_rel_abund = "SD\nRelative\nActivity (%)")
+    dplyr::rename("Mean\nRelative\nActivity (%)" = mean_rel_abund,
+           "SD\nRelative\nActivity (%)" = sd_rel_abund)
 
 
 plt_topSpecies_biops <- gridExtra::tableGrob(df_topSpecies_biopsy, rows = NULL,

@@ -128,8 +128,8 @@ plotVennDiagrams(data[["Tape_ControlVsADEcz"]],
                  data[["Biops_ControlVsADEcz"]],
                  labels = c("Tape Strip", "Biopsy"))+
   labs(title = "DEGs: 
-       **<span style='color:#e0433f;'>Lesional AD</span>** vs.
-       **<span style='color:#3246fb'>Control</span>**")+
+       **<span style='color:#e0433f;'>Active AD</span>** vs.
+       **<span style='color:#3246fb'>Healthy Control</span>**")+
   theme(plot.title = element_markdown(hjust = 0.5))
 
 # Non-Lesional AD vs Control
@@ -139,8 +139,8 @@ venn_ADNoEczVsControl <-
                    data[["Biops_ControlVsADNoEcz"]],
                    labels = c("Tape Strip", "Biopsy"))+
   labs(title = "DEGs: 
-       **<span style='color:#e0433f;'>Non-Lesional AD</span>** vs.
-       **<span style='color:#3246fb;'>Control</span>**")+
+       **<span style='color:#e0433f;'>Active AD</span>** vs.
+       **<span style='color:#3246fb;'>Healthy Control</span>**")+
   theme(plot.title = element_markdown(hjust = 0.5))
 
 # Tapes Vs. Biopsy 
@@ -162,8 +162,8 @@ Venn_SharedDEgenes_tapes <-
                    data[["Tape_ControlVsADEcz"]],
                    labels = c("EczemaVSControl", "Non-EczemaVSControl"))+
    labs(title = "DEGs (Tapes): 
-        **<span style='color:#e0433f;'>Lesional AD</span>** vs.
-        **<span style='color:#3246fb;'>Non-Lesional AD </span>**")+
+        **<span style='color:#e0433f;'>Active AD</span>** vs.
+        **<span style='color:#3246fb;'>Healthy Control</span>**")+
   theme(plot.title = element_markdown(hjust = 0.5))
 
 

@@ -255,8 +255,8 @@ top_relabund_type<-
   kraken_bac_abund %>%
   filter(!is.na(Sample_Type)) %>%
   group_by(Sample_Type, ID) %>%
-  summarize("mean_rel_abund" = mean(Rel_abund), 
-            "sd_rel_abund" = sd(Rel_abund)) %>%
+  summarize(mean_rel_abund = mean(Rel_abund), 
+            sd_rel_abund = sd(Rel_abund)) %>%
   slice_max(mean_rel_abund, n=10)
 
 #Write out the plots 
