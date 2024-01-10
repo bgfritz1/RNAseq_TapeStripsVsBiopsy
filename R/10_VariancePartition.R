@@ -105,6 +105,10 @@ count_vst_coding_biops <- count_vst_coding_biops[-c(idx),]
 
 # Run Variance Partition -------------------------------------------------------
 
+#Make sample to rownames on metadata to prevent error from filterInputData
+
+meta <- meta %>% column_to_rownames("Sample")
+
 # All data 
 
 form <- ~ (1|Sample_Type) + (1|Eczema_dorsalhand) + (1|AD)
@@ -120,7 +124,7 @@ saveRDS(vp_plot_all, file.path(out_dir, "generated_rds/10_vp_plot_all.RDS"))
 
 # Only Tapes
 
-varPart_tapes <- fitExtractVarPartModel(count_vst_coding_tape, form2, meta[meta$Sample %in% tapes,])
+varPart_tapes <- fitExtractVarPartModel(count_vst_coding_tape, form2, meta[row.names(meta) %in% tapes,])
 vp_tapes <- sortCols(varPart_tapes)
 vp_plot_tape <- plotVarPart(vp_tapes)
 
@@ -129,7 +133,7 @@ saveRDS(vp_plot_tape, file.path(out_dir, "generated_rds/10_vp_plot_tape.RDS"))
 
 # Only Biopsies
 
-varPart_biops <- fitExtractVarPartModel(count_vst_coding_biops, form2, meta[meta$Sample %in% biops,])
+varPart_biops <- fitExtractVarPartModel(count_vst_coding_biops, form2, meta[row.names(meta) %in% biops,])
 vp_biops <- sortCols(varPart_biops)
 vp_plot_biops <- plotVarPart(vp_biops)
 

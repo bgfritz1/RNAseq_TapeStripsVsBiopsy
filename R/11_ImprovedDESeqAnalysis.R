@@ -116,23 +116,23 @@ dds <- DESeq(dds)
 
 # Generate the Results 
 
-#Tape vs Biopsy - Healthy Controls
+#Tape vs Biopsy - Non-AD 
 res_TapeVsBiopsy_NoADorEcz <- results(dds, contrast = c("type_AD_ecz", "TYPEtape_stripADNoECZNo", "TYPEbiopsyADNoECZNo"), alpha = 0.05) 
 
 #Tape Vs Biopsy - Eczema of AD patients 
 res_TapeVsBiopsy_ADandEcz <- results(dds, contrast = c("type_AD_ecz", "TYPEtape_stripADYesECZYes", "TYPEbiopsyADYesECZYes"), alpha = 0.05)
 
-#Tapes Only - AD+Eczema vs Non-AD Control
-res_Tape_ControlVsADEcz <- results(dds, contrast = c("type_AD_ecz", "TYPEtape_stripADYesECZYes", "TYPEtape_stripADNoECZNo"), alpha = 0.05)
+#Tapes Only - AD+Eczema vs Non-AD 
+res_Tape_nonADVsADEcz <- results(dds, contrast = c("type_AD_ecz", "TYPEtape_stripADYesECZYes", "TYPEtape_stripADNoECZNo"), alpha = 0.05)
 
-#Tapes Only - AD+No Eczema vs Non-AD Control
-res_Tape_ControlVsADNoEcz <- results(dds, contrast = c("type_AD_ecz", "TYPEtape_stripADYesECZNo", "TYPEtape_stripADNoECZNo"), alpha = 0.05)
+#Tapes Only - AD+No Eczema vs Non-AD 
+res_Tape_nonADVsADNoEcz <- results(dds, contrast = c("type_AD_ecz", "TYPEtape_stripADYesECZNo", "TYPEtape_stripADNoECZNo"), alpha = 0.05)
 
-#Biops Only - AD+Eczema vs Non-AD Control
-res_Biops_ControlVsADEcz <- results(dds, contrast = c("type_AD_ecz", "TYPEbiopsyADYesECZYes", "TYPEbiopsyADNoECZNo"), alpha = 0.05)
+#Biops Only - AD+Eczema vs Non-AD 
+res_Biops_nonADVsADEcz <- results(dds, contrast = c("type_AD_ecz", "TYPEbiopsyADYesECZYes", "TYPEbiopsyADNoECZNo"), alpha = 0.05)
 
-#Biops Only - AD+No Eczema vs Non-AD Control
-res_Biops_ControlVsADNoEcz <- results(dds, contrast = c("type_AD_ecz", "TYPEbiopsyADYesECZNo", "TYPEbiopsyADNoECZNo"), alpha = 0.05)
+#Biops Only - AD+No Eczema vs Non-AD 
+res_Biops_nonADVsADNoEcz <- results(dds, contrast = c("type_AD_ecz", "TYPEbiopsyADYesECZNo", "TYPEbiopsyADNoECZNo"), alpha = 0.05)
 
 
 
@@ -152,20 +152,20 @@ formatDESeqOut<-function(res){
 
 res_TapeVsBiopsy_NoADorEcz_sig  <- formatDESeqOut(res_TapeVsBiopsy_NoADorEcz)
 res_TapeVsBiopsy_ADandEcz_sig <- formatDESeqOut(res_TapeVsBiopsy_ADandEcz)
-res_Tape_ControlVsADEcz_sig <- formatDESeqOut(res_Tape_ControlVsADEcz)
-res_Tape_ControlVsADNoEcz_sig <- formatDESeqOut(res_Tape_ControlVsADNoEcz)
-res_Biops_ControlVsADEcz_sig <- formatDESeqOut(res_Biops_ControlVsADEcz)
-res_Biops_ControlVsADNoEcz_sig <- formatDESeqOut(res_Biops_ControlVsADNoEcz)
+res_Tape_nonADVsADEcz_sig <- formatDESeqOut(res_Tape_nonADVsADEcz)
+res_Tape_nonADVsADNoEcz_sig <- formatDESeqOut(res_Tape_nonADVsADNoEcz)
+res_Biops_nonADVsADEcz_sig <- formatDESeqOut(res_Biops_nonADVsADEcz)
+res_Biops_nonADVsADNoEcz_sig <- formatDESeqOut(res_Biops_nonADVsADNoEcz)
 
 
 # Export CSV
 
 write_csv(res_TapeVsBiopsy_NoADorEcz_sig, file.path(out_dir, "generated_data/11_res_TapeVsBiopsy_NoADorEcz_sig.csv"))
 write_csv(res_TapeVsBiopsy_ADandEcz_sig,  file.path(out_dir, "generated_data/11_res_TapeVsBiopsy_ADandEcz_sig.csv"))
-write_csv(res_Tape_ControlVsADEcz_sig,  file.path(out_dir, "generated_data/11_res_Tape_ControlVsADEcz_sig.csv"))
-write_csv(res_Tape_ControlVsADNoEcz_sig,  file.path(out_dir, "generated_data/11_res_Tape_ControlVsADNoEcz_sig.csv"))
-write_csv(res_Biops_ControlVsADEcz_sig,  file.path(out_dir, "generated_data/11_res_Biops_ControlVsADEcz_sig.csv"))
-write_csv(res_Biops_ControlVsADNoEcz_sig,  file.path(out_dir, "generated_data/11_res_Biops_ControlVsADNoEcz_sig.csv"))
+write_csv(res_Tape_nonADVsADEcz_sig,  file.path(out_dir, "generated_data/11_res_Tape_nonADVsADEcz_sig.csv"))
+write_csv(res_Tape_nonADVsADNoEcz_sig,  file.path(out_dir, "generated_data/11_res_Tape_nonADVsADNoEcz_sig.csv"))
+write_csv(res_Biops_nonADVsADEcz_sig,  file.path(out_dir, "generated_data/11_res_Biops_nonADVsADEcz_sig.csv"))
+write_csv(res_Biops_nonADVsADNoEcz_sig,  file.path(out_dir, "generated_data/11_res_Biops_nonADVsADNoEcz_sig.csv"))
 
 
 

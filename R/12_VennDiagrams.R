@@ -51,10 +51,10 @@ library(ggtext)
 categories <- c(
   "TapeVsBiopsy_NoADorEcz",
   "TapeVsBiopsy_ADandEcz",
-  "Tape_ControlVsADEcz",
-  "Tape_ControlVsADNoEcz",
-  "Biops_ControlVsADEcz",
-  "Biops_ControlVsADNoEcz")
+  "Tape_nonADVsADEcz",
+  "Tape_nonADVsADNoEcz",
+  "Biops_nonADVsADEcz",
+  "Biops_nonADVsADNoEcz")
 
 data <- lapply(paste0(out_dir, "/generated_data/11_res_", categories, "_sig.csv"), read_delim)
 
@@ -121,26 +121,26 @@ plotVennDiagrams <- function(set1, set2, labels=c("set1", "set2"), colours = c("
 }
 
 
-# Lesional AD vs Control
+# Lesional AD vs Non-AD
 
-venn_ADEczVsControl <- 
-plotVennDiagrams(data[["Tape_ControlVsADEcz"]], 
-                 data[["Biops_ControlVsADEcz"]],
+venn_ADEczVsnonAD <- 
+plotVennDiagrams(data[["Tape_nonADVsADEcz"]], 
+                 data[["Biops_nonADVsADEcz"]],
                  labels = c("Tape Strip", "Biopsy"))+
   labs(title = "DEGs: 
        **<span style='color:#e0433f;'>Active AD</span>** vs.
-       **<span style='color:#3246fb'>Healthy Control</span>**")+
+       **<span style='color:#3246fb'>Non-AD</span>**")+
   theme(plot.title = element_markdown(hjust = 0.5))
 
-# Non-Lesional AD vs Control
+# Non-Lesional AD vs Non-AD
 
-venn_ADNoEczVsControl <- 
-  plotVennDiagrams(data[["Tape_ControlVsADNoEcz"]], 
-                   data[["Biops_ControlVsADNoEcz"]],
+venn_ADNoEczVsnonAD <- 
+  plotVennDiagrams(data[["Tape_nonADVsADNoEcz"]], 
+                   data[["Biops_nonADVsADNoEcz"]],
                    labels = c("Tape Strip", "Biopsy"))+
   labs(title = "DEGs: 
        **<span style='color:#e0433f;'>Active AD</span>** vs.
-       **<span style='color:#3246fb;'>Healthy Control</span>**")+
+       **<span style='color:#3246fb;'>Non-AD</span>**")+
   theme(plot.title = element_markdown(hjust = 0.5))
 
 # Tapes Vs. Biopsy 
@@ -158,18 +158,18 @@ Venn_TapesVsBiopsy_NoAD <-
 # Shared DE genes - Lesional and non-lesional AD - Tapes 
 
 Venn_SharedDEgenes_tapes <- 
-  plotVennDiagrams(data[["Tape_ControlVsADNoEcz"]], 
-                   data[["Tape_ControlVsADEcz"]],
-                   labels = c("EczemaVSControl", "Non-EczemaVSControl"))+
+  plotVennDiagrams(data[["Tape_nonADVsADNoEcz"]], 
+                   data[["Tape_nonADVsADEcz"]],
+                   labels = c("EczemaVSnonAD", "Non-EczemaVSnonAD"))+
    labs(title = "DEGs (Tapes): 
         **<span style='color:#e0433f;'>Active AD</span>** vs.
-        **<span style='color:#3246fb;'>Healthy Control</span>**")+
+        **<span style='color:#3246fb;'>Non-AD</span>**")+
   theme(plot.title = element_markdown(hjust = 0.5))
 
 
 out <- 
-cowplot::plot_grid(venn_ADEczVsControl, 
-                   venn_ADNoEczVsControl, 
+cowplot::plot_grid(venn_ADEczVsnonAD, 
+                   venn_ADNoEczVsnonAD, 
                    Venn_TapesVsBiopsy_NoAD,
                    Venn_SharedDEgenes_tapes, nrow = 2)
 
@@ -178,8 +178,8 @@ ggsave(file.path(out_dir, "./generated_figures/12_VennDiagrams.png"), out, width
 
 #Export Venndiagrams
 
-write_rds(venn_ADEczVsControl, file.path(out_dir, "./generated_rds/12_venn_ADEczVsControl.rds"))
-write_rds(venn_ADNoEczVsControl,  file.path(out_dir, "./generated_rds/12_venn_ADNoEczVsControl.rds"))
+write_rds(venn_ADEczVsnonAD, file.path(out_dir, "./generated_rds/12_venn_ADEczVsnonAD.rds"))
+write_rds(venn_ADNoEczVsnonAD,  file.path(out_dir, "./generated_rds/12_venn_ADNoEczVsnonAD.rds"))
 write_rds(Venn_TapesVsBiopsy_NoAD, file.path(out_dir, "./generated_rds/12_Venn_TapesVsBiopsy_NoAD.rds"))
 write_rds(Venn_SharedDEgenes_tapes, file.path(out_dir, "./generated_rds/12_Venn_SharedDEgenes_tapes.rds"))
 

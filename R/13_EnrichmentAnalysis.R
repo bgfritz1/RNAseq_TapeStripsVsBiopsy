@@ -119,10 +119,10 @@ pathways <- bind_rows(pathways, .id = "gene_set")
 categories <- c(
   "TapeVsBiopsy_NoADorEcz",
   "TapeVsBiopsy_ADandEcz",
-  "Tape_ControlVsADEcz",
-  "Tape_ControlVsADNoEcz",
-  "Biops_ControlVsADEcz",
-  "Biops_ControlVsADNoEcz")
+  "Tape_nonADVsADEcz",
+  "Tape_nonADVsADNoEcz",
+  "Biops_nonADVsADEcz",
+  "Biops_nonADVsADNoEcz")
 
 data <- lapply(paste0(out_dir, "/generated_data/11_res_", categories, "_sig.csv"), function(x){
 
@@ -153,50 +153,50 @@ length(intersect(immune_response$gene_symbol, coding_genes$external_gene_name))
 
 # Enrichment Analysis ----------------------------------------------------------
 
-# Tapes - AD Eczema vs Control 
+# Tapes - AD Eczema vs Non-AD
 
 counts <- 17975 #Number of genes used in DEseq data 
 
-enrich_tapes_ADEczvsControl <- 
+enrich_tapes_ADEczvsnonAD <- 
      lapply(unique(pathways$gene_set), function(x){
-       enrich <- calcEnrichment(data[["Tape_ControlVsADEcz"]]$external_gene_name, 
+       enrich <- calcEnrichment(data[["Tape_nonADVsADEcz"]]$external_gene_name, 
                                 counts, 
                                 pathways$gene_symbol[pathways$gene_set == x],
-                                dir = data[["Tape_ControlVsADEcz"]]$dir)
+                                dir = data[["Tape_nonADVsADEcz"]]$dir)
        enrich <- unlist(enrich)
        enrich$name <- x 
        return(unlist(enrich))
      }) %>% bind_rows()
 
 
-enrich_tapes_ADNoEczvsControl  <- 
+enrich_tapes_ADNoEczvsnonAD  <- 
   lapply(unique(pathways$gene_set), function(x){
-    enrich <- calcEnrichment(data[["Tape_ControlVsADNoEcz"]]$external_gene_name, 
+    enrich <- calcEnrichment(data[["Tape_nonADVsADNoEcz"]]$external_gene_name, 
                              counts, 
                              pathways$gene_symbol[pathways$gene_set == x],
-                             dir = data[["Tape_ControlVsADNoEcz"]]$dir)
+                             dir = data[["Tape_nonADVsADNoEcz"]]$dir)
     enrich <- unlist(enrich)
     enrich$name <- x 
     return(unlist(enrich))
   }) %>% bind_rows()
 
-enrich_biops_ADEczvsControl  <- 
+enrich_biops_ADEczvsnonAD  <- 
   lapply(unique(pathways$gene_set), function(x){
-    enrich <- calcEnrichment(data[["Biops_ControlVsADEcz"]]$external_gene_name, 
+    enrich <- calcEnrichment(data[["Biops_nonADVsADEcz"]]$external_gene_name, 
                              counts, 
                              pathways$gene_symbol[pathways$gene_set == x],
-                             dir = data[["Biops_ControlVsADEcz"]]$dir)
+                             dir = data[["Biops_nonADVsADEcz"]]$dir)
     enrich <- unlist(enrich)
     enrich$name <- x 
     return(unlist(enrich))
   }) %>% bind_rows()
 
-enrich_biops_ADNoEczvsControl  <- 
+enrich_biops_ADNoEczvsnonAD  <- 
   lapply(unique(pathways$gene_set), function(x){
-    enrich <- calcEnrichment(data[["Biops_ControlVsADNoEcz"]]$external_gene_name, 
+    enrich <- calcEnrichment(data[["Biops_nonADVsADNoEcz"]]$external_gene_name, 
                              counts, 
                              pathways$gene_symbol[pathways$gene_set == x],
-                             dir = data[["Biops_CControlVsADNoEcz"]]$dir)
+                             dir = data[["Biops_CnonADVsADNoEcz"]]$dir)
     enrich <- unlist(enrich)
     enrich$name <- x 
     return(unlist(enrich))
@@ -299,7 +299,7 @@ ifelse(x < 0, f_neg(x), f_pos(x))
 
 # Tapes Vs. Biopsies -----------------------------------------------------------
 
-# Inflammation - Eczema 
+# Inflammation - AD + Eczema 
 
 
 makeHighlightTable(data[["TapeVsBiopsy_ADandEcz"]], immune_response$gene_symbol,
@@ -312,12 +312,12 @@ makeHighlightTable(data[["TapeVsBiopsy_ADandEcz"]], immune_response$gene_symbol,
   gtsave(paste0(out_dir, "/generated_figures/13_tbl_Immune_ADandEcz.png"), vwidth = 2000)
 
 
-# Inflammation - Non-AD Controls  
+# Inflammation - Non-AD 
 
 
 makeHighlightTable(data[["TapeVsBiopsy_NoADorEcz"]], immune_response$gene_symbol,
                    color_up = "red", color_down = "blue") %>%
-  tab_header(title = md("Immune Reponse Genes By Method (Healthy Controls)"),
+  tab_header(title = md("Immune Reponse Genes By Method (Non-AD)"),
              subtitle = md("<span style='color:#f48f73'> Tape-strip </span>
                            vs 
                            <span style='color:#9067fc'> Biopsy </span>")) %>%
@@ -325,7 +325,7 @@ makeHighlightTable(data[["TapeVsBiopsy_NoADorEcz"]], immune_response$gene_symbol
   gtsave(paste0(out_dir, "/generated_figures/13_tbl_Immune_NoADorEcz.png"), vwidth = 2000)
 
 
-# Skin Barrier - Eczema 
+# Skin Barrier - AD + Eczema 
 
 makeHighlightTable(data[["TapeVsBiopsy_ADandEcz"]], skin_barrier$gene_symbol,
                    color_up = "red", color_down = "blue") %>%
@@ -337,12 +337,12 @@ makeHighlightTable(data[["TapeVsBiopsy_ADandEcz"]], skin_barrier$gene_symbol,
   gtsave(paste0(out_dir, "/generated_figures/13_tbl_Barrier_ADandEcz.png"), vwidth = 2000)
 
 
-# Skin Barrier  - Non-AD Controls  
+# Skin Barrier - Non-AD   
 
 
 makeHighlightTable(data[["TapeVsBiopsy_NoADorEcz"]], skin_barrier$gene_symbol,
                    color_up = "red", color_down = "blue") %>%
-  tab_header(title = md("Skin Barrier Genes By Method (Healthy Controls)"),
+  tab_header(title = md("Skin Barrier Genes By Method (Non-AD)"),
              subtitle = md("<span style='color:#f48f73'> Tape-strip </span>
                            vs 
                            <span style='color:#9067fc'> Biopsy </span>")) %>%
@@ -351,7 +351,7 @@ makeHighlightTable(data[["TapeVsBiopsy_NoADorEcz"]], skin_barrier$gene_symbol,
 
 
 
-# Itch - Eczema 
+# Itch - AD + Eczema 
 
 makeHighlightTable(data[["TapeVsBiopsy_ADandEcz"]], itch$gene_symbol,
                    color_up = "red", color_down = "blue") %>%
@@ -364,12 +364,12 @@ makeHighlightTable(data[["TapeVsBiopsy_ADandEcz"]], itch$gene_symbol,
 
 
 
-# Itch  - Non-AD Controls  
+# Itch  - Non-AD 
 
 
 makeHighlightTable(data[["TapeVsBiopsy_NoADorEcz"]], itch$gene_symbol,
                    color_up = "red", color_down = "blue") %>%
-  tab_header(title = md("Itch Genes By Method (Healthy Controls)"),
+  tab_header(title = md("Itch Genes By Method (Healthy Non-AD)"),
              subtitle = md("<span style='color:#f48f73'> Tape-strip </span>
                            vs 
                            <span style='color:#9067fc'> Biopsy </span>")) %>%

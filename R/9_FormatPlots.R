@@ -187,8 +187,8 @@ save_plot("./results/generated_figures/Figure2.png", fig2_final, base_height = 1
 
 # Figure 3 ---------------------------------------------------------------------
 
-venn_ADEczVsControl <- read_rds("./results/generated_rds/12_venn_ADEczVsControl.rds")
-venn_ADNoEczVsControl <- read_rds("./results/generated_rds/12_venn_ADNoEczVsControl.rds")
+venn_ADEczVsnonAD <- read_rds("./results/generated_rds/12_venn_ADEczVsnonAD.rds")
+venn_ADNoEczVsnonAD <- read_rds("./results/generated_rds/12_venn_ADNoEczVsnonAD.rds")
 Venn_TapesVsBiopsy_NoAD <- read_rds("./results/generated_rds/12_Venn_TapesVsBiopsy_NoAD.rds")
 Venn_SharedDEgenes_tapes <- read_rds("./results/generated_rds/12_Venn_SharedDEgenes_tapes.rds")
 
@@ -208,17 +208,17 @@ ggsave("./results/generated_figures/Figure3.png", Fig3)
 # Figure 4 ---------------------------------------------------------------------
 
 cats<-c(
-"Tape_ControlVsADEcz",
-"Biops_ControlVsADEcz",
-"Tape_ControlVsADNoEcz",
-"Biops_ControlVsADNoEcz")
+"Tape_nonADVsADEcz",
+"Biops_nonADVsADEcz",
+"Tape_nonADVsADNoEcz",
+"Biops_nonADVsADNoEcz")
 
 
 de_tables <- lapply(cats, function(x){
   
   title_type <- ifelse(grepl("Tape", x), "Tape Strip", "Biopsy")
-  title_condition1 <- ifelse(grepl("ControlVsADEcz", x), "Active AD", "Inactive AD")
-  title_condition2 <- "Control"
+  title_condition1 <- ifelse(grepl("nonADVsADEcz", x), "Active AD", "Inactive AD")
+  title_condition2 <- "non-AD"
   
   
   data <- read_delim(paste0("./results/generated_data/11_res_",x,"_sig.csv"))   
@@ -291,8 +291,8 @@ plt_tables <- lapply(cats, function(x){
 
 plt_tables <- plot_grid(plotlist=plt_tables, ncol = 4, labels = c("C","", "D", ""))
 
-plt_venns <- plot_grid(venn_ADEczVsControl,
-                       venn_ADNoEczVsControl, labels = c("A","B"))
+plt_venns <- plot_grid(venn_ADEczVsnonAD,
+                       venn_ADNoEczVsnonAD, labels = c("A","B"))
 
 plot_grid(plt_venns,
           plt_tables, nrow = 2, rel_heights = c(0.4, 0.7))
