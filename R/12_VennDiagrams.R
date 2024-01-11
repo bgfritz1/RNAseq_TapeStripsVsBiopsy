@@ -97,14 +97,30 @@ plotVennDiagrams <- function(set1, set2, labels=c("set1", "set2"), colours = c("
   
   plt <- 
     ggplot() +
-    geom_sf(aes(fill=name), data = venn_region(data_venn_up)) +
+    geom_polygon(aes(X, Y, fill = name, group = id), 
+                 data = venn_regionedge(data_venn_up),
+                 show.legend = FALSE) +
     scale_fill_manual(values = colours)+
-    geom_sf(size = 2,color = "black", data = venn_setedge(data_venn_up), show.legend = F) +
-    geom_sf_text(aes(label = name), data = venn_setlabel(data_venn_up)) +
-    geom_sf_label(aes(label = item), color = "red", fontface = "bold", nudge_y = 50, data =  region_data_up) +
-    geom_sf_label(aes(label = item), color = "blue", fontface = "bold", data = region_data_down)+
-    theme_void()+
-    theme(legend.position = "none")
+    coord_flip()+
+    geom_path(aes(X, Y,group = id), color="black",
+              data = venn_setedge(data_venn_up), 
+              linewidth = 1,
+              show.legend = FALSE) +
+    geom_text(aes(X, Y, label = name), 
+              fontface = "bold",
+              data = venn_setlabel(data_venn_up)) +
+    geom_label(aes(X, Y, label = count), 
+               data = venn_regionlabel(data_venn_up),
+               alpha = 0.5,
+               color = "red",
+               fontface = "bold") + 
+    geom_label(aes(X, Y, label = count), 
+               data = venn_regionlabel(data_venn_down),
+               alpha = 0.5,
+               nudge_x = 0.5,
+               color = "blue",
+               fontface = "bold") +
+    theme_void()
   
   
   print(paste0("Shape input set1: ", dim(set1)))
@@ -115,8 +131,6 @@ plotVennDiagrams <- function(set1, set2, labels=c("set1", "set2"), colours = c("
   print(paste0("Set2_up= ", length(set2_up)))
   print(paste0("Set2_down= ", length(set2_down)))
 
-  
-  
   return(plt)
 }
 
