@@ -108,18 +108,21 @@ plotVennDiagrams <- function(set1, set2, labels=c("set1", "set2"), colours = c("
               show.legend = FALSE) +
     geom_text(aes(X, Y, label = name), 
               fontface = "bold",
-              data = venn_setlabel(data_venn_up)) +
+              data = venn_setlabel(data_venn_up),
+              size = 8)+
     geom_label(aes(X, Y, label = count), 
                data = venn_regionlabel(data_venn_up),
-               alpha = 0.5,
+               
+               nudge_x = 0.5,
                color = "red",
-               fontface = "bold") + 
+               fontface = "bold",
+               size = 8) + 
     geom_label(aes(X, Y, label = count), 
                data = venn_regionlabel(data_venn_down),
-               alpha = 0.5,
-               nudge_x = 0.5,
+               nudge_x = -0.5,
                color = "blue",
-               fontface = "bold") +
+               fontface = "bold",
+               size = 8) +
     theme_void()
   
   
@@ -140,22 +143,24 @@ plotVennDiagrams <- function(set1, set2, labels=c("set1", "set2"), colours = c("
 venn_ADEczVsnonAD <- 
 plotVennDiagrams(data[["Tape_nonADVsADEcz"]], 
                  data[["Biops_nonADVsADEcz"]],
-                 labels = c("Tape Strip", "Biopsy"))+
+                 labels = c("Tape-Strips", "Biopsy"))+
   labs(title = "DEGs: 
        **<span style='color:#e0433f;'>Active AD</span>** vs.
        **<span style='color:#3246fb'>Non-AD</span>**")+
-  theme(plot.title = element_markdown(hjust = 0.5))
+  theme(plot.title = element_markdown(hjust = 0.5, size = 20),
+        axis.text = element_blank())
 
 # Non-Lesional AD vs Non-AD
 
 venn_ADNoEczVsnonAD <- 
   plotVennDiagrams(data[["Tape_nonADVsADNoEcz"]], 
                    data[["Biops_nonADVsADNoEcz"]],
-                   labels = c("Tape Strip", "Biopsy"))+
+                   labels = c("Tape-Strips", "Biopsy"))+
   labs(title = "DEGs: 
-       **<span style='color:#e0433f;'>Active AD</span>** vs.
+       **<span style='color:#e0433f;'>Inactive AD</span>** vs.
        **<span style='color:#3246fb;'>Non-AD</span>**")+
-  theme(plot.title = element_markdown(hjust = 0.5))
+  theme(plot.title = element_markdown(hjust = 0.5, size = 20),
+        axis.text = element_blank())
 
 # Tapes Vs. Biopsy 
 
@@ -166,7 +171,8 @@ Venn_TapesVsBiopsy_NoAD <-
   labs(title = "DEGs: 
        **<span style='color:#e0433f;'>Tape-strips</span>** vs.
        **<span style='color:#3246fb;'>Biopsies</span>**")+
-  theme(plot.title = element_markdown(hjust = 0.5))
+  theme(plot.title = element_markdown(hjust = 0.5, size = 20),
+        axis.text = element_blank())
 
 
 # Shared DE genes - Lesional and non-lesional AD - Tapes 
@@ -178,7 +184,8 @@ Venn_SharedDEgenes_tapes <-
    labs(title = "DEGs (Tapes): 
         **<span style='color:#e0433f;'>Active AD</span>** vs.
         **<span style='color:#3246fb;'>Non-AD</span>**")+
-  theme(plot.title = element_markdown(hjust = 0.5))
+  theme(plot.title = element_markdown(hjust = 0.5, size = 20),
+        axis.text = element_blank())
 
 
 out <- 

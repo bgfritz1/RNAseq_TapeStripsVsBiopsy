@@ -25,6 +25,12 @@ rm(list = ls())
 library(tidyverse)
 library(gt)
 library(cowplot)
+library(gtable)
+library(grid)
+library(gridtext)
+library(gridExtra)
+library(ggtext)
+library(ggpubr)
 
 
 # Functions --------------------------------------------------------------------
@@ -240,7 +246,7 @@ intersect(up_tapes_ecz, up_tapes_NoEcz)
 
 # Visualize --------------------------------------------------------------------
 
-# Individual Plots -------------------------------------------------------------
+#Format input data for highlight table
 
 makeHighlightTable <- function(de_data, pathway_genes, color_up, color_down, n_cutoff=20){
   
@@ -250,13 +256,13 @@ makeHighlightTable <- function(de_data, pathway_genes, color_up, color_down, n_c
     warning("NO OVERLAPPING GENES")
     return(gt(data.frame("Error" = "No Overlapping Genes")))
   }
-
+  
   top_positive <- 
     de_data %>% 
     filter(external_gene_name %in% overlapping_genes) %>%
     filter(log2FoldChange>0) %>%
     slice_min(padj, n = 10)
-
+  
   top_negative <- 
     de_data %>% 
     filter(external_gene_name %in% overlapping_genes) %>%
@@ -268,135 +274,171 @@ makeHighlightTable <- function(de_data, pathway_genes, color_up, color_down, n_c
     dplyr::select(external_gene_name, baseMean, log2FoldChange, padj) %>%
     mutate("padj" = signif(padj, digits = 3)) %>%
     mutate("log2FoldChange" = signif(log2FoldChange, digits = 3)) %>%
-    mutate("baseMean" = signif(baseMean, 3)) %>%
+    mutate("baseMean" = signif(baseMean, 0)) %>%
     arrange(desc(log2FoldChange))
   
-  pal <- function(x) {
-    f_neg <- scales::col_numeric(
-      palette = c(color_down,'white' ), 
-      domain= c(0,-15),
-      na.color = "black")
-    
-    f_pos <- scales::col_numeric(
-      palette = c('white', color_up),
-    domain = c(0,15))
-
-ifelse(x < 0, f_neg(x), f_pos(x))
-  }
-
-  out <- 
-  gt(df) %>%
-    data_color(columns = log2FoldChange, fn = pal) %>%
-    cols_label(
-      external_gene_name = "Gene",
-      padj = "Adjusted p-value"
-    ) %>% 
-    cols_align(align = "center")
+  colnames(df) <- c("Gene", "Mean\nExpression", "Log2FC", "Adjusted\nP-value")
+  return(df)
 }
 
 
-
+# Make the Tables 
 
 # Tapes Vs. Biopsies -----------------------------------------------------------
 
 # Inflammation - AD + Eczema 
 
-
-makeHighlightTable(data[["TapeVsBiopsy_ADandEcz"]], immune_response$gene_symbol,
-                   color_up = "red", color_down = "blue") %>%
-  tab_header(title = md("Immune Reponse Genes By Method (Active AD)"),
-             subtitle = md("<span style='color:#f48f73'> Tape-strip </span>
-                           vs 
-                           <span style='color:#9067fc'> Biopsy </span>")) %>%
-  tab_options(table.font.size = 75) %>%
-  gtsave(paste0(out_dir, "/generated_figures/13_tbl_Immune_ADandEcz.png"), vwidth = 2000)
-
+df_immune_AD<-
+  makeHighlightTable(data[["TapeVsBiopsy_ADandEcz"]], immune_response$gene_symbol)
 
 # Inflammation - Non-AD 
 
-
-makeHighlightTable(data[["TapeVsBiopsy_NoADorEcz"]], immune_response$gene_symbol,
-                   color_up = "red", color_down = "blue") %>%
-  tab_header(title = md("Immune Reponse Genes By Method (Non-AD)"),
-             subtitle = md("<span style='color:#f48f73'> Tape-strip </span>
-                           vs 
-                           <span style='color:#9067fc'> Biopsy </span>")) %>%
-  tab_options(table.font.size = 75) %>%
-  gtsave(paste0(out_dir, "/generated_figures/13_tbl_Immune_NoADorEcz.png"), vwidth = 2000)
-
-
+df_immune_nonAD<-
+  makeHighlightTable(data[["TapeVsBiopsy_NoADorEcz"]], immune_response$gene_symbol)
 # Skin Barrier - AD + Eczema 
-
-makeHighlightTable(data[["TapeVsBiopsy_ADandEcz"]], skin_barrier$gene_symbol,
-                   color_up = "red", color_down = "blue") %>%
-  tab_header(title = md("Skin Barrier Genes By Method (Active AD)"),
-             subtitle = md("<span style='color:#f48f73'> Tape-strip </span>
-                           vs 
-                           <span style='color:#9067fc'> Biopsy </span>")) %>%
-  tab_options(table.font.size = 75) %>%
-  gtsave(paste0(out_dir, "/generated_figures/13_tbl_Barrier_ADandEcz.png"), vwidth = 2000)
-
+df_barrier_AD<-
+  makeHighlightTable(data[["TapeVsBiopsy_ADandEcz"]], skin_barrier$gene_symbol)
 
 # Skin Barrier - Non-AD   
 
-
-makeHighlightTable(data[["TapeVsBiopsy_NoADorEcz"]], skin_barrier$gene_symbol,
-                   color_up = "red", color_down = "blue") %>%
-  tab_header(title = md("Skin Barrier Genes By Method (Non-AD)"),
-             subtitle = md("<span style='color:#f48f73'> Tape-strip </span>
-                           vs 
-                           <span style='color:#9067fc'> Biopsy </span>")) %>%
-  tab_options(table.font.size = 75) %>%
-  gtsave(paste0(out_dir, "/generated_figures/13_tbl_Barrier_NoADorEcz.png"), vwidth = 2000)
-
-
+df_barrier_nonAD<-
+  makeHighlightTable(data[["TapeVsBiopsy_NoADorEcz"]], skin_barrier$gene_symbol)
 
 # Itch - AD + Eczema 
-
-makeHighlightTable(data[["TapeVsBiopsy_ADandEcz"]], itch$gene_symbol,
-                   color_up = "red", color_down = "blue") %>%
-  tab_header(title = md("Itch Genes By Method (Active AD)"),
-             subtitle = md("<span style='color:#f48f73'> Tape-strip </span>
-                           vs 
-                           <span style='color:#9067fc'> Biopsy </span>")) %>%
-  tab_options(table.font.size = 75)  %>%
-  gtsave(paste0(out_dir, "/generated_figures/13_tbl_Itch_ADandEcz.png"), vwidth = 2000)
-
-
+df_itch_AD<-
+  makeHighlightTable(data[["TapeVsBiopsy_ADandEcz"]], itch$gene_symbol)
 
 # Itch  - Non-AD 
 
+df_itch_nonAD<-
+  makeHighlightTable(data[["TapeVsBiopsy_NoADorEcz"]], itch$gene_symbol)
 
-makeHighlightTable(data[["TapeVsBiopsy_NoADorEcz"]], itch$gene_symbol,
-                   color_up = "red", color_down = "blue") %>%
-  tab_header(title = md("Itch Genes By Method (Healthy Non-AD)"),
-             subtitle = md("<span style='color:#f48f73'> Tape-strip </span>
-                           vs 
-                           <span style='color:#9067fc'> Biopsy </span>")) %>%
-  tab_options(table.font.size = 75) %>%
-  gtsave(paste0(out_dir, "/generated_figures/13_tbl_Itch_NoADorEcz.png"), vwidth = 2000)
 
-# Make Combined Plots ----------------------------------------------------------
+# Make Figure 3 ----------------------------------------------------------
 
-plotPathways <- function(pathway){
-  plt_adecz<-
-  ggdraw() + draw_image(paste0(out_dir, "/generated_figures/13_tbl_",pathway,"_ADandEcz.png"), valign = 1)+
-    theme(plot.margin = margin(0.1, 0.1, 0.1, 0.1, "cm"))
-  
-  plt_NOadecz<-
-    ggdraw() + draw_image(paste0(out_dir, "/generated_figures/13_tbl_",pathway,"_NoADorEcz.png"), valign = 1)+
-      theme(plot.margin = margin(0.1, 0.1, 0.1, 0.1, "cm"))
 
-  plot_grid(plt_adecz, plt_NOadecz)
+#Import Venns 
+
+venn_ADEczVsnonAD <- read_rds("./results/generated_rds/12_venn_ADEczVsnonAD.rds")
+venn_ADNoEczVsnonAD <- read_rds("./results/generated_rds/12_venn_ADNoEczVsnonAD.rds")
+Venn_TapesVsBiopsy_NoAD <- read_rds("./results/generated_rds/12_Venn_TapesVsBiopsy_NoAD.rds")
+Venn_SharedDEgenes_tapes <- read_rds("./results/generated_rds/12_Venn_SharedDEgenes_tapes.rds")
+
+
+#Justification function bc not built into tableGrob
+
+justify <- function(x, just = 1) {
+  height <- as.numeric(grid::convertHeight(sum(x$heights), 'npc'))
+  x$vp <- grid::viewport(y = just + height * (0.5 - just))
+  x
 }
 
-pw_plots_Immune <- plotPathways("Immune")
-pw_plots_Barrier <- plotPathways("Barrier")
-pw_plots_Itch <- plotPathways("Itch")
+#coloring function
+pal <- function(x, color_up, color_down) {
+  f_neg <- scales::col_numeric(
+    palette = c(color_down,'white' ), 
+    domain= c(0,-15),
+    na.color = "black")
+  
+  f_pos <- scales::col_numeric(
+    palette = c('white', color_up),
+    domain = c(0,15))
+  
+  ifelse(x < 0, f_neg(x), f_pos(x))
+}
 
-ggsave(paste0(out_dir, "/generated_figures/13_ImmuneAll.png"), pw_plots_Immune)
-ggsave(paste0(out_dir, "/generated_figures/13_BarrierAll.png"), pw_plots_Barrier)
-ggsave(paste0(out_dir, "/generated_figures/13_Itch.png"), pw_plots_Itch)
+# Format Grobs 
+
+formatTables <- function(x, title){
+  
+  #Generate the background colors for the LFC
+  bg_cols <- pal(x$Log2FC, color_up = "red", color_down="#7065fb")
+  
+  bg_mat <- matrix("white", nrow(x), ncol(x))
+  bg_mat[,3] <- bg_cols
+  
+  theme <- ttheme_default(base_size = 12,
+                          core = list(
+                          bg_params = list(fill=bg_mat)
+                          ))
+  
+  t1 <- tableGrob(x, rows = NULL, theme = theme) 
+  title <- richtext_grob(title, gp = gpar(fontsize=20))
+  padding <- unit(5,"mm")
+  
+  table <- gtable_add_rows(
+    t1, 
+    heights = grobHeight(title) + padding,
+    pos = 0)
+  
+  table <- gtable_add_grob(
+    table, 
+    title, 
+    1, 1, 1, ncol(table))
+  
+  return(table)
+  
+}
+
+
+# Titles 
+
+fig3B_title1 <- c("Immune Response: <br>
+<span style='color:#f48f73'>Tape-Strips</span> 
+vs. 
+<span style='color:#9067fc'>Biopsy</span> <br>(Active AD)")
+
+fig3B_title2 <- c("Immune Response: <br>
+<span style='color:#f48f73'>Tape-Strips</span> 
+vs. 
+<span style='color:#9067fc'>Biopsy</span> <br>(No AD)")
+
+fig3C_title1 <- c("Itch:<br>
+<span style='color:#f48f73'>Tape-Strips</span> 
+vs. 
+<span style='color:#9067fc'>Biopsy</span> <br>(Active AD)")
+
+fig3C_title2 <- c("Itch:<br>
+<span style='color:#f48f73'>Tape-Strips</span> 
+vs. 
+<span style='color:#9067fc'>Biopsy</span> <br>(No AD)")
+
+fig3D_title1 <- c("Skin Barrier: <br>
+<span style='color:#f48f73'>Tape-Strips</span> 
+vs. 
+<span style='color:#9067fc'>Biopsy</span> <br>(Active AD)")
+
+fig3D_title2 <- c("Skin Barrier: <br>
+<span style='color:#f48f73'>Tape-Strips</span> 
+vs. 
+<span style='color:#9067fc'>Biopsy</span> <br>(No AD)")
+
+Fig3B_1 <-formatTables(df_immune_AD, title = fig3B_title1)
+Fig3B_2 <- formatTables(df_immune_nonAD, title = fig3B_title2)
+Fig3B <- arrangeGrob(justify(Fig3B_1, just = 0.5), justify(Fig3B_2, just = 0.58), ncol = 2)
+
+Fig3C_1 <- formatTables(df_itch_AD, title = fig3C_title1)
+Fig3C_2 <- formatTables(df_itch_nonAD, title = fig3C_title2)
+Fig3C <- arrangeGrob(justify(Fig3C_1, just = 1.03), justify(Fig3C_2, just = 1), ncol = 2)
+
+Fig3D_1 <- formatTables(df_barrier_AD, title = fig3D_title1)
+Fig3D_2 <- formatTables(df_barrier_nonAD, title = fig3D_title2)
+Fig3D <- arrangeGrob(justify(Fig3D_1, just = 0), justify(Fig3D_2, just = 0.03), ncol = 2)
+
+g <- list(Venn_TapesVsBiopsy_NoAD + theme(plot.margin = margin(0.5,2,0.5,2, "cm")), Fig3B, Fig3C, Fig3D)
+
+figure_mat <- rbind(c(1,1,2,2), c(3,3,4,4),c(3,3,4,4))
+
+Fig3<-
+  arrangeGrob(grobs = g, layout_matrix = figure_mat) |>
+  as_ggplot() +
+  draw_plot_label(label = c("A.", "B.", "C.", "D."), 
+                  x = c(0, 0.48, 0 , 0.48),
+                  y = c(1, 1, 0.62, 0.62),
+                  size = 25)
+
+
+ggsave("./results/generated_figures/Figure3.png", Fig3, width = 15, height = 15)
 
 
 # Cell Type Enrichent Analysis 

@@ -67,7 +67,7 @@ getCodingGenes <- function() {
 
 # Load data --------------------------------------------------------------------
 meta <-  read_tsv("data/Metadata_Final.tsv", 
-                         col_types = list(Sample_Type = col_factor(levels = c("tape_strip", "biopsy")))
+                         col_types = list(Sample_Type = readr::col_factor(levels = c("tape_strip", "biopsy")))
 )
 
 count_vst <- read_csv("./results/generated_data/01_df_count_vst.csv")
@@ -111,8 +111,8 @@ meta <- meta %>% column_to_rownames("Sample")
 
 # All data 
 
-form <- ~ (1|Sample_Type) + (1|Eczema_dorsalhand) + (1|AD)
-form2 <- ~ (1|AD) + (1|Eczema_dorsalhand)
+form <- ~ Sample_Type + Eczema_dorsalhand + AD
+form2 <- ~ AD + Eczema_dorsalhand
 
 varPart <- fitExtractVarPartModel(count_vst_coding, form, meta)
 

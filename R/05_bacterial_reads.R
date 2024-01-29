@@ -70,8 +70,8 @@ kraken_data <-
 
 # Import the metadata 
 
-meta <- meta <- read_tsv("data/Metadata_Final.tsv", 
-                         col_types = list(Sample_Type = col_factor(levels = c("tape_strip", "biopsy")))
+meta <- read_tsv("data/Metadata_Final.tsv", 
+                         col_types = list(Sample_Type = readr::col_factor(levels = c("tape_strip", "biopsy")))
 )
 
 #Select only Bacterial species and exclude the other domains 
@@ -160,7 +160,8 @@ bac_percent <- kraken_data %>%
   labs(title="Bacterial Content",
        fill="Sample Type") +
   xlab(NULL) +
-  facet_grid(~Sample_Type, scale = "free_x")+
+  facet_grid(~Sample_Type, scale = "free_x", labeller = as_labeller(c("tape_strip" = "Tape-Strips",
+                                                                      "biopsy" = "Biopsy")))+
   ylab("Percentage of Bacterial Reads (%)") +
   scale_fill_manual(labels = c("Tape Strip", "Biopsy"),
                     values = sample_type.cols) +
@@ -248,13 +249,29 @@ test <- bind_rows(diff)
 test$padj <- p.adjust(test$pval)
 
 
+# Quick S_aureus analysis 
+
+plt_kraken_saureus_reads <- kraken_bac_abund %>%
+  filter(grepl("Staphylococcus aureus", ID) & !is.na(AD)) %>%
+  ggplot(aes(x=fct_reorder(Sample_ID, AD), y = nr_reads_root_taxon))+
+  geom_bar(stat = "identity")
+
+
+plt_kraken_saureus_relabund <- kraken_bac_abund %>%
+  filter(grepl("Staphylococcus aureus", ID) & !is.na(AD)) %>%
+  ggplot(aes(x=fct_reorder(Sample_ID, AD), y = Rel_abund))+
+  geom_bar(stat = "identity")
+
+
+
+
 
 # Top Mean Abundance -----------------------------------------------------------
 
 top_relabund_type<-
   kraken_bac_abund %>%
   filter(!is.na(Sample_Type)) %>%
-  group_by(Sample_Type, ID) %>%
+  group_by(Sample_Type, AD, ID) %>%
   summarize(mean_rel_abund = mean(Rel_abund), 
             sd_rel_abund = sd(Rel_abund)) %>%
   slice_max(mean_rel_abund, n=10)
@@ -262,6 +279,8 @@ top_relabund_type<-
 #Write out the plots 
 saveRDS(bac_percent, file.path(out_dir, "generated_rds/05_bac_prcnt_barplot.rds"))
 saveRDS(bac_percent_boxplot, file.path(out_dir, "generated_rds/05_bac_prcnt_boxplot.rds")) 
+saveRDS(plt_kraken_saureus_reads, file.path(out_dir, "generated_rds/05_Saureus_reads_barplot.rds"))
+saveRDS(plt_kraken_saureus_relabund, file.path(out_dir, "generated_rds/05_Saureus_relabund_barplot.rds"))
 
 # write out kraken data 
 write_csv(top_relabund_type, file.path(out_dir, "generated_data/05_top_species.csv"))

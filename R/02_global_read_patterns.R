@@ -39,7 +39,8 @@ for(dir in file.path(out_dir, dirs)){
 library(biomaRt)
 library(tidyverse)
 library(DESeq2)
-library(pheatmap)
+library(circlize)
+library(ComplexHeatmap)
 library(factoextra)
 
 
@@ -176,6 +177,34 @@ ggsave(biplot_12_all,
        height = 5,
        width = 6)
 
+# PCA Biplot - PC1 and PC2 - Eczema status 
+
+biplot_12_all_ecz <- 
+res.pca %>%
+  mutate("AD" = paste0(Subject_type,"_Eczema",Eczema_dorsalhand)) %>%
+  ggplot(aes(x = PC1, y = PC2)) +
+    geom_point(aes(color = AD, shape = Sample_Type),
+               size = 3.5,
+               alpha = .8) +
+    xlab(paste("PC1 (", round(var_explained[1], 2), " % var explained)",
+               sep = "")) + 
+    ylab(paste("PC2 (", round(var_explained[2], 2), " % var explained)",
+               sep = "")) +
+    labs(title = "PC1 vs PC2 biplot: All samples",
+         shape = "Sample Type", color = "AD") +
+    scale_shape_discrete(labels = c("Tape Strip", "Biopsy")) +
+    scale_color_manual(values = c("AD_EczemaNo" = "#e3b867",
+                                  "AD_EczemaYes" = "#e92020",
+                                  "nonAD_EczemaNo" = "#77b8fc"))+
+    theme_bw()
+
+saveRDS(biplot_12_all_ecz, file.path(out_dir, "generated_rds/02_PCA_plot_AllSamples_ecz.rds"))
+
+ggsave(biplot_12_all_ecz,
+       file =  file.path(out_dir, "generated_figures/02_PCA_plot_AllSamples_ecz.png"),
+       height = 5,
+       width = 6)
+
 
 ## Distance matrix of all samples (Coding Genes) -------------------------------
 
@@ -185,23 +214,53 @@ dist_all <- dist(t(count_vst_coding),
                  upper = T)
 
 
+# Heatmap
 
-heatmap <- pheatmap(as.matrix(dist_all),
-         main = "Euclidean Distance Matrix",
-         show_colnames = TRUE,
-         show_rownames = TRUE,
-         annotation_col = column_to_rownames(meta[,c("Sample", "AD", "Sample_Type", "Eczema_dorsalhand")], 
-                                             "Sample"),
-         annotation_colors = list(AD = c(Yes = "#ff826c", No = "#4ea24e"),
-                                  Sample_Type = c(tape_strip = "#ffffb3", biopsy = "#bebada")),
-         cluster_rows = T) 
-heatmap
+hmap_col = colorRamp2(seq(min(dist_all), max(dist_all), length = 2), c("#ffffbf", "#d73027"))
 
-saveRDS(heatmap, file.path(out_dir, "generated_rds/02_distance_heatmap.rds"))
+hmap_annotations <- 
+  meta %>%
+   select(Sample_Type, AD, Eczema_dorsalhand)
+colnames(hmap_annotations) <- c("Type", "AD", "Eczema")
 
-ggsave(heatmap,
-       file = file.path(out_dir, "generated_figures/02_heatmap_sub.png"),
-       height = 6,
-       width = 7)
+hmap_annotations$Type <- fct_recode(hmap_annotations$Type, 
+                                           "Tape-Strip" = "tape_strip",
+                                           "Biopsy" = "biopsy")
+
+
+ha <- 
+  HeatmapAnnotation(df = hmap_annotations,
+                    col = list(AD = c("Yes" = "#ff826c", "No" = "#4ea24e"),
+                               Type = c("Tape-Strip" = "#ffffb3", "Biopsy" = "#bebada"),
+                               Eczema = c("Yes" = "darkorange", "No" = "lightgreen")),
+                    gp = gpar(col = "#989797"))
+
+hm <- 
+  Heatmap(as.matrix(dist_all), col = hmap_col, name = "Euclidian Distance",
+          column_title = "Between-Sample Similarity",
+          top_annotation = ha,
+          heatmap_legend_param = list(
+            legend_direction = "horizontal", 
+            legend_width = unit(6, "cm")),
+          rect_gp = gpar(col= "#989797"))
+
+plt_heatmap <- grid.grabExpr({
+  
+  draw(hm, 
+       heatmap_legend_side="bottom", 
+       annotation_legend_side="right", 
+       legend_grouping = "original")
+  
+  for(type in c("AD", "Type", "Eczema")){
+    
+    decorate_annotation(type, {
+      grid.rect(gp = gpar(fill = NA, col = "#989797"))
+      grid.lines(unit(c(0, 1), "npc"), unit(c(20, 20), "native"), gp = gpar(lty = 2))
+    })
+  }
+})
+
+
+saveRDS(plt_heatmap, file.path(out_dir, "generated_rds/02_distance_heatmap.rds"))
 
 

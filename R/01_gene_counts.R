@@ -41,7 +41,7 @@ for(dir in file.path(out_dir, dirs)){
 library(tidyverse)
 library(DESeq2)
 library(reshape2)
-
+library(ggpubr)
 # Define Functions -------------------------------------------------------------
 
 #Function to count genes above cutoff X in each sample
@@ -186,25 +186,30 @@ df_pval_vs_cutoff$pval_adj <- p.adjust(df_pval_vs_cutoff$pval, method = "fdr") #
 
 
 # Identify how many genes are shared between the methods for cutoff values 
-# of 10 and 100 
+# of 10, 75, and 200 
 
 x <- meta$Participant
 n_common_genes_10 <- lapply(x, find_common_genes,
                             metadata = meta,
                             counts = count,
                             cutoff = 10)
-n_common_genes_100 <- lapply(x, find_common_genes,
+n_common_genes_75 <- lapply(x, find_common_genes,
                              metadata = meta,
                              counts = count,
-                             cutoff = 100)
-df_n_common_genes <- bind_rows(n_common_genes_10, n_common_genes_100)
+                             cutoff = 75)
+n_common_genes_200 <- lapply(x, find_common_genes,
+                             metadata = meta,
+                             counts = count,
+                             cutoff = 200)
+
+df_n_common_genes <- bind_rows(n_common_genes_10, n_common_genes_75, n_common_genes_200)
 df_n_common_genes <- melt(df_n_common_genes, id.vars = c("Participant", "cutoff"))
 
 
 # VST transformed raw count data 
 
 # Pre-filtering 
-smallestGroupSize <- 5 #AD with active eczema is smallest group (n=5)
+smallestGroupSize <- 5 
 keep <- rowSums(count >= 10) >= smallestGroupSize
 count_filtered <- count[keep,]
 
@@ -255,37 +260,19 @@ names(eczema.cols) <- levels(meta$Eczema_dorsalhand)
 
 
 
-# Number of observed genes relative to the lower count threshold ---------------
-
-fig_genes_vs_cutoff_smooth <- ggplot(df_gene_count, mapping = aes(cutoff, gene_count, colour=Sample_Type)) +
-  # geom_point(alpha=.5, size=.5) +
-  geom_smooth() +
-  labs(title = "Number of Detected Genes vs Read Count Cut-off",
-       colour = "Sample Type") +
-  xlab("read count cut-off") +
-  ylab("# detected genes") +
-  scale_color_discrete(labels = c("Tape Strip", "Biopsy")) +
-  theme_bw()
-
-fig_genes_vs_cutoff_smooth
-
-ggsave(file = paste0(out_dir, "/generated_figures/01_GenesVsCutoff.png"),
-       height = 6,
-       width = 9)
-
 # Boxplot of number of detected genes above 10 and 100 count cutoff ------------
 
 fig_n_genes_method <- df_gene_count %>%
-  filter(cutoff %in% c(1, 10, 100)) %>%
+  filter(cutoff %in% c(10, 75, 200)) %>%
 ggplot(mapping = aes(Sample_Type, 
                      gene_count,
                               fill = Sample_Type)) +
   geom_boxplot(width = 0.5, outlier.colour = NULL) +
   geom_jitter(size=2, alpha=0.5, width = 0.1) +
   geom_line(aes(group=Participant), colour="grey", linetype="11") +
-  facet_wrap(~ cutoff, labeller = labeller(cutoff = c("1" = "Read Count Cut-off:1",
-                                                      "10"="Read Count Cut-off: 10",
-                                                      "100"="Read Count Cut-off: 100"))) +
+  facet_wrap(~ cutoff, labeller = labeller(cutoff = c("10" = "Read Count Cut-off:10",
+                                                      "75"="Read Count Cut-off: 75",
+                                                      "200"="Read Count Cut-off:200"))) +
   labs(title = "Number of Detected Genes with each Sampling Method",
        colour = "Sample Type") +
   ylab("# detected genes") +
@@ -293,7 +280,6 @@ ggplot(mapping = aes(Sample_Type,
   scale_color_discrete(labels = c("Tape Strip", "Biopsy")) +
   theme_bw()
   
-fig_n_genes_method
 
 ggsave(file = paste0(out_dir, "/generated_figures/01_n_genes_vs_method.png"),
        height = 6,
@@ -301,74 +287,6 @@ ggsave(file = paste0(out_dir, "/generated_figures/01_n_genes_vs_method.png"),
 
 saveRDS(fig_n_genes_method, paste0(out_dir, "/generated_rds/01_n_genes_vs_method.rds"))
 
-
-
-#  Boxplot of number of detected genes by method faceted by eczema -------------
-
-fig_n_genes_eczema <- df_gene_count %>%
-  filter(cutoff %in% c(10)) %>%
-  ggplot(mapping = aes(Eczema_dorsalhand, 
-                       gene_count,
-                       colour = Eczema_dorsalhand)) +
-  geom_boxplot() +
-  geom_point(size=2, alpha=0.5) +
-  ylim(0,50000)+
-  facet_wrap(~ Sample_Type) +
-  labs(title = "Number of Detected Genes with each Sampling Method",
-       colour = "Eczema") +
-  ylab("# detected genes") +
-  xlab("Eczema") +
-  theme_bw()
-
-fig_n_genes_eczema
-
-ggsave(file = paste0(out_dir, "/generated_figures/01_n_genes_eczema.png"),
-       height = 6,
-       width = 9)
-
-#  Boxplot of number of detected genes by method faceted by AD -----------------
-
-fig_n_genes_AD <- df_gene_count %>%
-  filter(cutoff %in% c(10)) %>%
-  ggplot(mapping = aes(AD, 
-                       gene_count,
-                       colour = AD)) +
-  geom_boxplot() +
-  geom_point(size=2, alpha=0.5) +
-  facet_wrap(~ Sample_Type) +
-  ylim(0,50000)+
-  labs(title = "Number of Detected Genes with each Sampling Method",
-       colour = "AD") +
-  ylab("# detected genes") +
-  xlab("AD") +
-  theme_bw()
-
-fig_n_genes_AD
-
-ggsave(file = paste0(out_dir, "/generated_figures/01_n_genes_AD.png"),
-       height = 6,
-       width = 9)
-
-
-#  Boxplot of number of detected genes by method faceted by AD -----------------
-
-fig_diff_vs_cutoff <- df_gene_count_diff %>%
-  filter(cutoff %in% c(10,50,100,150,200)) %>% 
-  ggplot(mapping = aes(cutoff, diff, colour=as.factor(cutoff))) +
-  geom_boxplot() +
-  geom_point(color="black", size=0.5, alpha=0.9) +
-  labs(title = "Difference in # of Detected genes (Biopsies - Tapes) vs Count Cut-off",
-       colour = "Count Cut-off") +
-  ylab("Difference in # detected genes") +
-  xlab("Count Cut-off") + 
-  theme_bw() +
-  theme(legend.position = "none") 
-
-fig_diff_vs_cutoff
-
-ggsave(file = paste0(out_dir, "/generated_figures/01_diff_vs_cutoff_sub.png"),
-       height = 6,
-       width = 9)
 
 
 # Plot of P-value for one-sample t-testing whether the difference in # of genes 
@@ -379,7 +297,7 @@ fig_PvalDiff <-ggplot(df_pval_vs_cutoff,
   geom_point(size=0.3) +
   ylim(0, 1) +
   geom_hline(yintercept = 0.05, 
-             colour = "red") +
+             colour = "black", linetype = "dashed") +
   ylab("fdr adjusted p-value") +
   xlab("Count Cut-off") +
   labs(title = "p-value vs Count Cut-off") +
@@ -413,42 +331,6 @@ ggsave(filename = paste0(out_dir, "/generated_figures/01_DiffVsCutoff.png"),
 saveRDS(fig_MeanDiff, paste0(out_dir, "/generated_rds/01_DiffVsCutoff.rds"))
 
 
-
-# Barplot of number of genes detected by each method and the number of genes in 
-# common
-
-avg_common_genes <- df_n_common_genes %>% 
-  filter(cutoff == 10, variable == "n_common") %>%
-  dplyr::select(value) %>%
-  colMeans()
-
-common_genes <- df_n_common_genes %>% 
-  filter(cutoff == 10) %>%
-  ggplot(mapping = aes(x=Participant),
-                       y=value) +
-  geom_bar(aes(fill = variable, y = value),
-           stat = "identity",
-           position="dodge" ,
-           width=.5) +
-  geom_hline(aes(yintercept = avg_common_genes,
-                 linetype = "Mean # of Common Genes"),
-             colour = "darkseagreen3") +
-  theme_bw() +
-  xlab("Patient Number") +
-  ylab("# genes") +
-  labs(title = "# Genes in Common with Counts Above 10",
-       fill = "Detected By") +
-  scale_fill_manual(values = c("darkseagreen3", "steelblue1", "indianred3"),
-                    labels = c("Both Methods", "Tape Strip", "Biopsy")) +
-  scale_linetype_manual(name = NULL,
-                        values = "dashed")
-
-common_genes  
-
-ggsave(file=paste0(out_dir, "/generated_figures/01_n_common_genesBAR.png"),
-       height = 6,
-       width = 11)
-
 # Barplot of number of genes detected by each method and the number of genes in 
 # common
 
@@ -457,9 +339,10 @@ common_genes_boxplot<-
          mapping = aes(x=variable,
                        y=value)) +
   geom_boxplot(aes(fill = variable)) +
-  geom_jitter(colour="black", size=.5) +
+  geom_jitter(colour="black",fill="grey", size=1, width = 0.1) +
   facet_wrap(~ cutoff, labeller = labeller(cutoff = c("10"="Read Count Cut-off: 10",
-                                                      "100"="Read Count Cut-off: 100"))) +
+                                                      "75"="Read Count Cut-off: 75",
+                                                      "200" = "Read Count Cut-off: 200"))) +
   theme_bw() +
   xlab("Patient Number") +
   ylab("# genes") +

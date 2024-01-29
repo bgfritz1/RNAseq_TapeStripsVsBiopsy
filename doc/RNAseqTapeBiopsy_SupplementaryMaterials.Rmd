@@ -1,0 +1,109 @@
+---
+title: "Supplementary Materials"
+bibliography: References.bib
+csl: citation_style.csl
+output:
+  bookdown::word_document2:
+    number_sections: false
+--- 
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(tidyverse)
+library(bookdown)
+library(scales)
+```
+
+## Supplementary Methods 
+
+Here, we include a more detailed description of RNA-extraction, sequencing, and bioinformatic analysis. 
+
+### RNA extraction from tape-strips and skin biopsies
+
+To extract total RNA from skin skin biopsies, the biopsy was placed into a bead-beating tube (Starstedt)
+filled one-third with 0.1 mm and 2 mm zirconia beads (Techtum, Sweden). Eight-hundred microliters 
+of ice-cold Trizol® reagent was added and the samples were homogenized (3 x 30 seconds, 7000 intensity)
+in a MagnaLyzer instrument (Roche, Germany). Samples were placed on ice for 1 min between each homogenization.
+For tape-strips, 800 μL of ice-cold Trizol® was added to a 1.5 mL microcentrifuge tube containing a 
+single tape and vortexed for 60 seconds. The tube was spun down and the Trizol® was transferred to a new tube containing 
+the next tape in the series. This was repeated for a total of seven tapes. Tape 6 was used for cytokine analysis and not included in the analysis (data not shown). 
+After the final tape, the Trizol® was pipetted into a fresh tube. For both tapes and skin biopsies, 160 μL of chloroform was added to the 800 μL
+of Trizol® containing the extracted RNA. The samples were shaken for 45 seconds by hand and spun down at
+13,000 x g for 15 mins at 4 °C. The upper aqueous phase was collected into a fresh tube and 0.4 mL ice-cold isopropanol
+followed by 2 μL linear acrylamide was added. The sample was inverted several times and placed at -20°C for 1 hr to precipitate RNA. 
+The sample was spun down (13,000 x g, 15 mins, 4°C) and the supernatant was discarded. The RNA pellet was washed twice with 900 uL 
+of freshly-prepared 75 % ethanol. Pellets were air-dried and resuspended in 15-20 μL nuclease free water. Concentration and purity was assessed with a Nanodrop spectrophotometer (Thermofisher Scientific, USA).
+
+### rRNA depletion, Library Preparation, and sequencing
+
+Ribosomal RNA depletion was then performed with the riboPOOLs rRNA depletion kit 
+(siTOOLS Biotech, Germany) using a 100:1 combination of the Human_riboPOOL-RP3 to Pan-Pro_riboPOOL-RP3. 
+For tapes, an input volume of 13.5 μL total RNA in nuclease free water was used. 
+For skin biopsies, an input of 1 μg total RNA in 13.5 μL was used. Depletion was performed as described in the kit manual. 
+Approximately ~80 uL of depleted RNA was collected as eluate from the final streptavidin bead purification to remove
+riboPOOL oligo probes. The eluate was treated with DNAse (RQ1 RNAse-free DNAse, 10 μL DNAse + 10 uL DNAse buffer) 
+for 30 mins at 37°C. The DNAse treated and rRNA depleted RNA was purified with a 
+Clean & Concentrate-5 RNA kit (Zymo Research, USA) and eluted in a final volume of 8 μL
+nuclease-free water. Library preparation was performed with the NEB Ultra II RNA directional 
+library prep kit. For tapes, 5 μL of rRNA depleted RNA was used as the concentration was 
+too low to standardize. For skin biopsies, 10 ng of rRNA depleted RNA was used as input. Library preparation was performed
+as described in the manual with a 1:25 adapter dilution and 12 and 10 PCR cycles for the final 
+amplification for the tapes and skin biopsies, respectively. Quality and molarity of the final libraries
+was assessed with a 2100 Bioanalyzer with a High-Sensitivity DNA chip (Agilent Technologies, USA) and
+a Qubit fluorometer using the 1x dsDNA kit (Thermofisher Scientific, USA). Samples
+were pooled in equimolar concentrations and sequenced on a NovaSeq6000 instrument using 
+150PE v1.5 chemistry (Illumina, USA). 
+
+## Processing of raw sequencing data 
+
+Raw sequencing data was demultiplexed with bcl2fastq v2.0 (Illumina, USA). 
+Processing of raw sequencing data was performed with an in-house pipeline.[@RN135] 
+Briefly, samples sequenced across multiple sequencing lanes of the same flow cell were concatenated. 
+Reads were then trimmed with *cutadapt v3.4* to remove sequencing adapters.[@RN136] 
+Reads less than 30 nucleotides in length were filtered. The trimmed and filtered reads were then aligned to the 
+human reference genome (GRCh38 primary assembly, Ensembl release 107) using *bwa-mem v0.7.17* with default settings.[@RN137] 
+Read pairs mapping to known gene features were counted with *featureCounts* from the *subRead v2.0.3* package with  
+*--fracOverlap 0.2*.[@RN30] *Kraken2 v2.1.2* was also applied to the concatenated sequencing files to quantify bacterial reads 
+using the full, standard RefSeq index.[@RN1] Reads classified as *Homo sapiens* were counted as host reads, 
+while reads mapping to the kingdom Bacteria at any taxonomic level were counted as bacterial reads.
+
+
+## Bioinformatic analysis and statistics 
+
+Genes not present with at least 10 counts in 5 samples (the size of the smallest group - active AD) were excluded.
+The difference in number of genes with detectable expression between methods was determined by calculating the difference in number of genes 
+detected above a given expression threshold for each tape-strip and biopsy in a pair and tested with a paired t-test. This was repeated for incremental increases in the threshold 
+cutoff from 10 to 75. The count matrix was then normalized with the *vst* function from the DESeq2 package and used for the remaining analysis, unless otherwise specified.[@RN138] 
+Between-sample similarities were calculated with euclidean distance. Variance partitioning was performed with the *variancePartition* package in R. 
+Differential gene-expression analysis was performed with DESeq2 on the filtered, un-normalized count matrix. 
+
+For differential gene-expression analysis, the AD(yes or no), 
+eczema(yes or no), and type (tape-strip or biopsy) variables were collapsed into a single variable (type_AD_ecz). 
+The DESeq2 design formula was then defined as: *~ type_AD_ecz*. 
+DEGs were extracted using the *results* function. For example, 
+*results(dds, contrast = c("type_AD_ecz", "TYPEbiopsyADyesECZyes", "TYPEbiopsyADnoECZno"))* 
+was used to extract DEGs between active AD and control samples from biopsies.  
+Differentially expressed genes were identified as those with an 
+absolute log2FoldChange > 1 and an adjusted p-value less than 0.05. All p-values were adjusted for multiple testing, 
+when appropriate.  
+
+## Data and Code Availability 
+
+All code to perform the analsis included in this article is available from the authors upon reasonable request. 
+
+## Supplementary Figures
+
+![FigureS1](../results/generated_figures/FigureS1.png)  
+*<small>Figure S1. PCA-plot of vst-normalized gene expression profiles for protein-coding gene-features (n = 24,739 genes). Points are highlighted by sampling method (tape strips or biopsy) and whether eczema was present on the sampling location (dorsal hand).</small>*
+
+
+\newpage
+
+![FigureS2](../results/generated_figures/FigureS2.png)
+
+*<small>Figure S2. (A) Total number of reads assigned to S. aureus for tape-strips and biopsy samples. (B) Relative activity of S. aureus for tape-strip and biopsy samples. Relative activity is defined as the number of reads assigned to S. aureus at the species level divided by the total number of bacterial reads. </small>*
+
+\newpage
+
+## References
+

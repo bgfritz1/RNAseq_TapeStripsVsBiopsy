@@ -70,6 +70,9 @@ out_table <-
                    EASI_total ~ "Eczema Area and Severity Index (EASI)",
                    TLSS_total ~ "Total Lesion Severity Score (TLSS)\n(Dorsal Hand)",
                    Eczema_dorsalhand ~ "Eczema (Dorsal Hand)"),
+      statistic = list(all_continuous() ~ "{mean} (± {sd})"),
+      digits = list(EASI_total ~ c(0),
+                    TLSS_total ~ c(0)),
       type = list(EASI_total ~ "continuous",
                   TLSS_total ~ "continuous",
                   Eczema_dorsalhand ~ "categorical"),
@@ -81,10 +84,10 @@ out_table <-
        footnote = "Only for AD participants with eczema on dorsal hand"
      ) %>%
   modify_caption("Summary of Participant Metadata") %>%
-  modify_footnote(all_stat_cols() ~ "Median (IQR) for Age, BMI, EASI, TLSS; n(%) for Fillagrin Gene Mutation, Eczema on dorsal hand")
+  modify_footnote(all_stat_cols() ~ "Mean (± SD) for Age, BMI, EASI, TLSS; n(%) for Fillagrin Gene Mutation, Eczema on dorsal hand")
 
-out_table$table_body$stat_1[out_table$table_body$stat_1 == "NA (NA, NA)"] <- "NA"
-out_table$table_body$stat_2[out_table$table_body$stat_2 == "NA (NA, NA)"] <- "NA"
+out_table$table_body$stat_1[out_table$table_body$stat_1 == "NA (± NA)"] <- "NA"
+out_table$table_body$stat_2[out_table$table_body$stat_2 == "NA (± NA)"] <- "NA"
 
 out_table
 
