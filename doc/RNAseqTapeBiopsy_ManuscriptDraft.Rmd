@@ -305,7 +305,7 @@ between gene-expression profiles from tape-strips and skin biopsies
 (median R^2^ = 0.431 ± 0.20, pearson correlation). Hierarchical clustering identified that gene-expression profiles clustered by sample method rather than subject or 
 AD status (Figure \@ref(fig:figure2)A).  
 Principal component analysis (PCA) also demonstrated a clear separation between expression profiles from 
-tapes and biopsies across the main principal component (PC1), which described 75 % of the observed variability (Figure \@ref(fig:figure2)B).
+tapes and biopsies across the main principal component (PC1), which described 75 % of the observed variability (Figure \@ref(fig:figure2)B,S1).
 Interestingly, three tape-strip samples (T8, T10, T12) showed markedly higher correlations with biopsies and clustered closer to biopsies 
 by PCA and hierarchical clustering. Sampling method described the majority of the gene-level variability (Figure \@ref(fig:figure2)C. 
 Though tape-strips showed a higher between-sample variability than biopsies (Figure \@ref(fig:figure2)B), they explained more gene-level 
@@ -460,7 +460,7 @@ not have a lesion in the sampled area. Non-lesional control samples were also no
 thus the effect could not be investigated. There was also a high variability in RNA yield and quality of 
 sequencing data obtained from tape-strips and non-AD samples had more RNA extracted and better quality sequencing data than AD. Thus, it is difficult to determine whether DEGs identified 
 in tape-strips between AD and non-AD are due to physiological changes 
-or methodological biases. Further, we hypothesized that DNA contamination plays a role in background signal for tape-strips, but DNA concentration measurements were not available.
+or methodological biases. Regarding detection of bacteria, the sampling area for biopsies was disinfected prior to sampling, which may affect the detection of bacterial transcription. Lastly, we hypothesized that DNA contamination plays a role in background signal for tape-strips, but DNA concentration measurements were not available.
 
 ## Conclusions
 
